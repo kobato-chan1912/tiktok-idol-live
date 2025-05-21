@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Gift Overlay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        #gift-box {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #f9e6be;
+            color: #000;
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-size: 22px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        #gift-box.show {
+            display: block;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="gift-box"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="overlay.js"></script>
+</body>
+
+</html>

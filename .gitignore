@@ -1,0 +1,10 @@
+node_modules
+config/key.json
+database.json
+output/*
+temp
+.DS_Store
+package-lock.json
+build/
+assets/
+.env
