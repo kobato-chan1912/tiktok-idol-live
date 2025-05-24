@@ -49,8 +49,8 @@ module.exports = {
 
     if (effectSetting) {
       const effect = pickRandomFromEffect(effectSetting);
-      gift.gif = "http://localhost:4001". effect.gif;
-      gift.sound = "http://localhost:4001". effect.sound;
+      gift.gif = "http://localhost:4001" + effect.gif;
+      gift.sound = "http://localhost:4001" + effect.sound;
 
     }
     gift.is_thank = is_thank;
@@ -93,12 +93,12 @@ function pickRandomFromEffect(effect) {
   const gifFolders = effect.gifs.split(',').map(s => s.trim());
   const gifFolder = randomItem(gifFolders);
   const gifFiles = fs.readdirSync(path.join(basePath, 'gifs', gifFolder));
-  const gif = path.join(basePath, 'gifs', gifFolder, randomItem(gifFiles));
+  const gif = "/assets/gifs/" + gifFolder + "/" + randomItem(gifFiles);
 
   const soundFolders = effect.sounds.split(',').map(s => s.trim());
   const soundFolder = randomItem(soundFolders);
   const soundFiles = fs.readdirSync(path.join(basePath, 'sounds', soundFolder));
-  const sound = path.join(basePath, 'sounds', soundFolder, randomItem(soundFiles));
+  const sound = "/assets/sounds/" + soundFolder + "/" + randomItem(soundFiles);
 
   return { gif, sound };
 }

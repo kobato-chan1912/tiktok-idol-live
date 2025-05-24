@@ -18,6 +18,7 @@ document.getElementById('toggleLive').addEventListener('click', async () => {
   }
 
   if (!isLive) {
+    showLoading("Đang kết nối tới live...");
     // Start TikTok Live
     tiktokLive = new WebcastPushConnection(username, {
       clientParams: {
@@ -34,20 +35,19 @@ document.getElementById('toggleLive').addEventListener('click', async () => {
     tiktokLive.connect().then(state => {
       console.log(`Connected to ${username}`);
       document.getElementById('toggleLive').innerText = 'Dừng Live';
+      document.getElementById('toggleLive').className = 'btn btn-danger';
       isLive = true;
+      alert('Đã kết nối tới live!');
     }).catch(err => {
       console.error(err);
       alert('Không thể kết nối tới live.');
-    });
+    }).finally(err => {
+      hideLoading();
+    }
+  
+  );
 
-    tiktokLive.on('chat', data => {
-      // Không hiển thị comment
-      // console.log({
-      //   avatar: data.uniqueId,
-      //   username: data.nickname || data.uniqueId,
-      //   content: data.comment
-      // });
-    });
+  
 
     tiktokLive.on('gift', data => {
       if (data.giftType === 1 && !data.repeatEnd) return;
@@ -57,7 +57,7 @@ document.getElementById('toggleLive').addEventListener('click', async () => {
         name: data.giftName,
         count: `${data.diamondCount} Diamonds`
       };
-      // console.log('Received gift:', giftData);
+ 
       overlayServer.sendGift(giftData);
     });
 
@@ -67,6 +67,7 @@ document.getElementById('toggleLive').addEventListener('click', async () => {
     // overlayServer.closeServer?.(); // Nếu muốn tắt hẳn server
     isLive = false;
     document.getElementById('toggleLive').innerText = 'Bắt đầu Live';
+    document.getElementById('toggleLive').className = 'btn btn-primary';
     console.log('Ngắt kết nối.');
   }
 });
@@ -152,8 +153,23 @@ window.getEffectMap = () => {
 };
 
 
+function showLoading(text){
+  const overlay = document.getElementById('overlay');  
+  const loadingText = document.getElementById('loading-text');
+  overlay.style.display = 'flex';
+  loadingText.innerText = text;
+}
+
+
+function hideLoading(){
+  const overlay = document.getElementById('overlay');  
+  overlay.style.display = 'none';
+}
+
+
 async function downloadAssets() {
   try {
+    showLoading("Đang tải assets...");
     const basePath = path.join(userDataPath, 'main-assets');
 
     // Xoá thư mục nếu đã tồn tại
@@ -184,6 +200,7 @@ async function downloadAssets() {
 
 
     alert("Tải xong assets, vui lòng khởi động lại ứng dụng.");
+    hideLoading();
   } catch (error) {
     console.log('Lỗi trong quá trình tải hoặc giải nén:', error);
   }
