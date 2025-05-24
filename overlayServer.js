@@ -6,6 +6,7 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+const { ipcRenderer } = require('electron');
 
 app.use(express.static(__dirname));
 
@@ -13,31 +14,91 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'overlay.html'));
 });
 
-let ioInstance = null;
+
+
+const clients = new Set();
 
 io.on('connection', (socket) => {
   console.log('Overlay connected');
-  ioInstance = socket;
+  clients.add(socket);
 
   socket.on('disconnect', () => {
-    ioInstance = null;
+    clients.delete(socket);
     console.log('Overlay disconnected');
   });
 });
 
-server.listen(3000, () => {
-  console.log('Overlay server running at http://localhost:3000');
+
+server.listen(4000, async () => {
+  console.log('Overlay server running at http://localhost:4000');
+  const userDataPath = await ipcRenderer.invoke('get-user-data-path');
+  console.log('User data path:', userDataPath);
 });
 
-// export để renderer gọi được
+
 module.exports = {
   sendGift: (gift) => {
-    if (ioInstance) ioInstance.emit('show-gift', gift);
+    const effectMap = window.getEffectMap();
+    const effectSetting = effectMap[gift.name];
+    const noThanks = window.getNoThankGiftNames();
+    let is_thank = true;
+    if (noThanks.includes(gift.name)) {
+      is_thank = false;
+    }
+
+
+    if (effectSetting) {
+      const effect = pickRandomFromEffect(effectSetting);
+      gift.gif = "http://localhost:4001". effect.gif;
+      gift.sound = "http://localhost:4001". effect.sound;
+
+    }
+    gift.is_thank = is_thank;
+    gift.main_effect = effectSetting ? true : false;
+    for (const client of clients) {
+      client.emit('show-gift', gift);
+    }
+
   },
   clearGift: () => {
-    if (ioInstance) ioInstance.emit('clear');
+    for (const client of clients) {
+      client.emit('clear');
+    }
+
   },
   closeServer: () => {
     server.close();
   }
 };
+
+
+
+// xử lý effect  
+function randomItem(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+let basePath = null;
+
+async function initBasePath() {
+  const userDataPath = await ipcRenderer.invoke('get-user-data-path');
+  basePath = path.join(userDataPath, 'main-assets', 'assets');
+  console.log('Base path set:', basePath);
+}
+
+initBasePath();
+
+
+function pickRandomFromEffect(effect) {
+  const gifFolders = effect.gifs.split(',').map(s => s.trim());
+  const gifFolder = randomItem(gifFolders);
+  const gifFiles = fs.readdirSync(path.join(basePath, 'gifs', gifFolder));
+  const gif = path.join(basePath, 'gifs', gifFolder, randomItem(gifFiles));
+
+  const soundFolders = effect.sounds.split(',').map(s => s.trim());
+  const soundFolder = randomItem(soundFolders);
+  const soundFiles = fs.readdirSync(path.join(basePath, 'sounds', soundFolder));
+  const sound = path.join(basePath, 'sounds', soundFolder, randomItem(soundFiles));
+
+  return { gif, sound };
+}

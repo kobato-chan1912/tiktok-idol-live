@@ -13,14 +13,70 @@
 <body class="p-4">
   <div class="container">
     <h3 class="mb-3">TikTok IDOL Live</h3>
+    <p>
+      <button class="btn-primary btn" onclick="downloadAssets()">Tải Assets</button>
+    </p>
+    <div class="alert alert-primary" role="alert">
+      Mở OBS/Tiktok Studio và add layer web với URL <strong href="javascript:void(0)"
+        class="alert-link">http://localhost:4000/overlay.html</strong>
+    </div>
+    <div class="alert alert-primary" role="alert">
+      Cài NodeJS và chạy lệnh sau
+      <div>
+        <strong class="alert-link">npm install -g http-server (chỉ chạy 1 lần nếu chưa cài)</strong>
+      </div>
+      <div>
+        <strong class="alert-link">cd %APPDATA%/ToolIdol/main-assets && http-server -p 4001</strong>
+        </div>
+    </div>
     <div class="mb-3">
       <label for="username" class="form-label">TikTok Username</label>
       <input type="text" id="username" class="form-control" placeholder="Ví dụ: tiktokliveuser" />
     </div>
-    <button id="toggleLive" class="btn btn-primary">Bắt đầu Live</button>
+
+    <div class="mb-3 live-btn">
+      <button id="toggleLive" class="btn btn-primary">Bắt đầu Live</button>
+    </div>
+
+
+    <div class="setting">
+      <label for="ignored-gifts" class="form-label mb-2">Loại quà không cần cảm ơn</label>
+      <textarea id="ignored-gifts" class="form-control" rows="4"
+        placeholder="Nhập tên từng loại quà, mỗi dòng một loại"></textarea>
+
+      <hr class="my-4" />
+
+      <label for="effects-container " class="form-label mb-2">Hiệu ứng hiển thị</label>
+
+      <div id="effects-list"></div>
+
+      <button id="add-effect" class="btn btn-primary mt-3">+ Thêm hiệu ứng</button>
+
+
+      <template id="effect-template">
+        <div class="row mb-2 align-items-center effect-item">
+          <div class="col-md-5">
+            <input type="text" class="form-control gift-name" placeholder="Tên loại quà">
+          </div>
+          <div class="col-md-4">
+            <select class="form-select effect-select">
+              <option value="1">Hiệu ứng 1</option>
+              <option value="2">Hiệu ứng 2</option>
+              <option value="3">Hiệu ứng 3</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <button type="button" class="btn btn-danger remove-effect">Xoá</button>
+          </div>
+        </div>
+      </template>
+
+    </div>
+
+
+
+
   </div>
 
   <script src="./renderer.js"></script>
 </body>
-
-</html>

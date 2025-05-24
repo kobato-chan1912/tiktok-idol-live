@@ -4,10 +4,11 @@ const fs = require('fs');
 const fsPromise = require('fs').promises;
 let mainWindow;
 
+
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 900,
-    height: 720,
+    width: 600,
+    height: 1000,
     webPreferences: {
       nodeIntegration: true, // Cho phép sử dụng require trong renderer process
       contextIsolation: false, // Cho phép sử dụng require trong renderer process
@@ -23,7 +24,11 @@ function createWindow() {
   });
 }
 
-app.on('ready', createWindow);
+app.on('ready', () => {
+  createWindow(); 
+});
+
+
 
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') {
@@ -71,4 +76,10 @@ ipcMain.handle('select-folder', async (event) => {
   } else {
     return null; // Người dùng hủy chọn folder
   }
+});
+
+
+ipcMain.handle('get-user-data-path', () => {
+  return app.getPath('userData');
+  // return path.join("")
 });
