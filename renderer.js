@@ -230,7 +230,7 @@ async function downloadAssets() {
     }
     fs.mkdirSync(basePath, { recursive: true });
 
-    const assetsURL = process.env.ASSETS_URL; // Thay thế bằng URL thực tế
+    const assetsURL = `${process.env.ASSETS_URL}?ver=${Date.now()}`;
     const zipPath = path.join(userDataPath, 'assets.zip');
 
     // Tải file ZIP với axios và lưu vào ổ cứng
