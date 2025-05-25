@@ -25,7 +25,7 @@ function createWindow() {
       nodeIntegration: true, // Cho phép sử dụng require trong renderer process
       contextIsolation: false, // Cho phép sử dụng require trong renderer process
       enableRemoteModule: true, // Cho phép sử dụng remote trong renderer process
-
+      devTools: false,
     }
   });
 
@@ -38,7 +38,7 @@ function createWindow() {
 
 app.on('ready', () => {
   startStaticServerIfNeeded();
-  createWindow(); 
+  createWindow();
 });
 
 

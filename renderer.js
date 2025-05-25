@@ -225,7 +225,7 @@ async function downloadAssets() {
     }
     fs.mkdirSync(basePath, { recursive: true });
 
-    const assetsURL = "https://otp.streaming-go.shop/assets.zip";
+    const assetsURL = process.env.ASSETS_URL; // Thay thế bằng URL thực tế
     const zipPath = path.join(userDataPath, 'assets.zip');
 
     // Tải file ZIP với axios và lưu vào ổ cứng
