@@ -90,15 +90,15 @@ initBasePath();
 
 
 function pickRandomFromEffect(effect) {
-  const gifFolders = effect.gifs.split(',').map(s => s.trim());
-  const gifFolder = randomItem(gifFolders);
-  const gifFiles = fs.readdirSync(path.join(basePath, 'gifs', gifFolder));
-  const gif = "/assets/gifs/" + gifFolder + "/" + randomItem(gifFiles);
+  const effectName = effect.name;
 
-  const soundFolders = effect.sounds.split(',').map(s => s.trim());
-  const soundFolder = randomItem(soundFolders);
-  const soundFiles = fs.readdirSync(path.join(basePath, 'sounds', soundFolder));
-  const sound = "/assets/sounds/" + soundFolder + "/" + randomItem(soundFiles);
+  const gifFiles = effect.gifs.split(',').map(s => s.trim());
+  const gifFile = randomItem(gifFiles);
+  const gif = "/assets/" + effectName + "/" + gifFile;
+
+  const soundFiles = effect.sounds.split(',').map(s => s.trim());
+  const soundFile = randomItem(soundFiles);
+  const sound = "/assets/" + effectName + "/" + soundFile;
 
   return { gif, sound };
 }

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tổng hợp 20 Hiệu ứng Cảm ơn Độc Đáo</title>
+<style>
+    /* Import Google Fonts used across various effects */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
+
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        background-color: #1a1a2e; /* Dark space blue */
+        margin: 0;
+        padding-top: 20px;
+        font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        overflow-x: hidden;
+    }
+
+    .thank-you-wrapper {
+        margin-bottom: 50px;
+        width: 90%;
+        max-width: 550px; /* Default max width */
+        position: relative;
+    }
+
+    .thank-you-base {
+        display: none; /* Hidden by default */
+        align-items: center;
+        padding: 20px 30px;
+        background-color: rgba(44, 62, 80, 0.85);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        color: #e0e0e0;
+        position: relative;
+        overflow: hidden; /* CRUCIAL */
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .thank-you-base.active {
+        display: flex; /* Show active effect */
+    }
+
+    .thank-you-base .avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        margin-right: 20px;
+        object-fit: cover;
+        border: 3px solid transparent;
+        flex-shrink: 0;
+    }
+
+    .thank-you-base .message {
+        font-size: 1.2em;
+        line-height: 1.5;
+    }
+
+    .thank-you-base .username {
+        font-weight: bold;
+    }
+
+    /* --- Controls --- */
+    
+    .controls {
+        margin-top: 20px;
+        margin-bottom: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    .controls button {
+        padding: 10px 15px; /* Slightly smaller buttons */
+        font-size: 13px; /* Smaller font */
+        cursor: pointer;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        background: linear-gradient(45deg, #f06, #0cf);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        min-width: 150px; /* Ensure buttons have some width */
+        text-align: center;
+    }
+    .controls button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+    .controls button.active-btn {
+        background: linear-gradient(45deg, #0cf, #f06);
+        transform: scale(1.05) translateY(-2px);
+    }
+
+    /* === ORIGINAL 5 EFFECTS (Adapted to new base styles) === */
+    #effect1 { animation: slideInFromLeft 0.7s ease-out forwards, fadeInOriginal 0.7s ease-out forwards; }
+    #effect1 .avatar { border-color: #f1c40f; animation: subtleGlowOriginal 1.5s infinite alternate ease-in-out; }
+    #effect1 .username { color: #f1c40f; }
+    @keyframes slideInFromLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+    @keyframes fadeInOriginal { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes subtleGlowOriginal { from { box-shadow: 0 0 5px #f1c40f, 0 0 10px #f1c40f; } to { box-shadow: 0 0 15px #f1c40f, 0 0 25px #f1c40f; } }
+
+    #effect2 { animation: popUpOriginal 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; }
+    #effect2 .username { color: #3498db; }
+    #effect2 .username::after { content: '✨'; display: inline-block; margin-left: 5px; animation: sparkleOriginal 1s infinite; }
+    @keyframes popUpOriginal { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes sparkleOriginal { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } }
+
+    #effect3-wrapper { perspective: 1000px; }
+    #effect3 { transform-origin: left center; animation: flipInOriginal 0.8s ease-out forwards; }
+    #effect3 .username { color: #2ecc71; }
+    @keyframes flipInOriginal { from { transform: rotateY(-90deg) translateX(-50%); opacity: 0; } to { transform: rotateY(0deg) translateX(0); opacity: 1; } }
+
+    #effect4 { background: radial-gradient(circle at 20% 50%, #4a6a8a 0%, #34495e 70%); animation: spotlightRevealOriginal 1s ease-out forwards; clip-path: circle(0% at 10% 50%); }
+    #effect4 .username { color: #e67e22; }
+    #effect4 .message { opacity: 0; animation: fadeInTextOriginal 0.5s 0.5s ease-out forwards; }
+    @keyframes spotlightRevealOriginal { to { clip-path: circle(150% at 10% 50%); } }
+    @keyframes fadeInTextOriginal { to { opacity: 1; } }
+
+    #effect5 { animation: bouncyDropOriginal 0.8s cubic-bezier(0.5, 0.05, 0.55, 0.95) forwards; }
+    #effect5 .username { color: #9b59b6; }
+    #effect5 .message span.text-part { display: inline-block; opacity: 0; transform: translateY(20px); animation: textCascadeOriginal 0.3s ease-out forwards; }
+    /* JS will add delays to .text-part */
+    @keyframes bouncyDropOriginal { 0% { transform: translateY(-200px) scaleY(0.7); opacity: 0; } 60% { transform: translateY(10px) scaleY(1.05); opacity: 1; } 80% { transform: translateY(-5px) scaleY(0.98); } 100% { transform: translateY(0) scaleY(1); opacity: 1; } }
+    @keyframes textCascadeOriginal { to { opacity: 1; transform: translateY(0); } }
+
+    /* === EFFECTS 6-15 === */
+    #effect6 { background: radial-gradient(ellipse at center, #4c0070 0%, #1a002e 70%, #0d0017 100%); animation: fadeInScaleUp 0.8s ease-out forwards; }
+    #effect6 .avatar { border-color: #c56cf0; animation: pulseGlow 2s infinite alternate; }
+    #effect6 .username { color: #c56cf0; }
+    #effect6::before, #effect6::after { content: ''; position: absolute; width: 3px; height: 3px; background: white; border-radius: 50%; box-shadow: 0 0 5px white, 0 0 10px white; animation: galaxyParticles 3s linear infinite; opacity: 0; }
+    #effect6::before { top: 20%; left: 10%; animation-delay: 0s; }
+    #effect6::after { top: 70%; left: 80%; animation-delay: 1.5s; }
+    @keyframes fadeInScaleUp { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+    @keyframes pulseGlow { from { box-shadow: 0 0 5px #c56cf0, 0 0 10px #c56cf0, 0 0 15px #c56cf0; } to { box-shadow: 0 0 10px #c56cf0, 0 0 20px #c56cf0, 0 0 30px #e09eff; } }
+    @keyframes galaxyParticles { 0% { transform: translate(0,0) scale(0.5); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translate(150px, -150px) scale(1.5); opacity: 0; } }
+
+    #effect7 { background-color: #000; border: 5px solid #ff00ff; box-shadow: 0 0 15px #ff00ff, 0 0 30px #ff00ff, inset 0 0 10px #ff00ff; animation: neonFlickerBg 3s infinite alternate; }
+    #effect7 .avatar { border: 3px solid #00ffff; box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff; animation: neonFlickerBorder 2.5s infinite alternate; }
+    #effect7 .message { color: #f0f0f0; text-shadow: 0 0 5px #fff, 0 0 10px #00ffff, 0 0 15px #00ffff; }
+    #effect7 .username { color: #ff00ff; text-shadow: 0 0 5px #fff, 0 0 10px #ff00ff, 0 0 15px #ff00ff; }
+    @keyframes neonFlickerBg { 0%, 18%, 22%, 25%, 53%, 57%, 100% { box-shadow: 0 0 15px #ff00ff, 0 0 30px #ff00ff, inset 0 0 10px #ff00ff; opacity: 1; } 20%, 24%, 55% { box-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, inset 0 0 5px #ff00ff; opacity: 0.8; } }
+    @keyframes neonFlickerBorder { 0%, 100% { box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff; opacity: 1; } 50% { box-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff; opacity: 0.7; } }
+
+    #effect8-wrapper { perspective: 1200px; }
+    #effect8 { background: linear-gradient(135deg, #8B4513, #D2691E); border: 4px solid #FFD700; border-radius: 15px 15px 8px 8px; transform-style: preserve-3d; animation: treasureAppear 0.5s ease-out forwards; }
+    #effect8 .avatar { border-color: #FFD700; transform: translateY(-10px); }
+    #effect8 .username { color: #FFFACD; text-shadow: 0 0 8px #FFD700; }
+    #effect8::before { content: ''; position: absolute; top: -20px; left: -4px; right: -4px; height: 40px; background: #A0522D; border: 4px solid #FFD700; border-radius: 10px 10px 0 0; transform-origin: bottom center; animation: openLid 1s 0.5s ease-out forwards; }
+    @keyframes treasureAppear { from { opacity:0; transform: translateY(50px); } to { opacity:1; transform: translateY(0); } }
+    @keyframes openLid { 0% { transform: rotateX(0deg); } 100% { transform: rotateX(-110deg); } }
+
+    #effect9 { background: linear-gradient(to bottom, #001030, #003060); animation: shootingStarEnter 1s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+    #effect9 .avatar { border-color: #fff700; box-shadow: 0 0 15px #fff700; }
+    #effect9 .username { color: #fff700; }
+    #effect9::after { content: ''; position: absolute; top: 50%; left: -50px; width: 0px; height: 5px; background: linear-gradient(to right, rgba(255,255,224,0), rgba(255,255,224,0.8)); border-radius: 5px; transform: translateY(-50%); animation: shootingStarTail 1s 0.2s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+    @keyframes shootingStarEnter { from { transform: translateX(-150%) rotate(-15deg); opacity: 0; } to { transform: translateX(0) rotate(0deg); opacity: 1; } }
+    @keyframes shootingStarTail { from { width: 0px; left: -50px; } to { width: 150px; left: 10px; } }
+
+    #effect10 { animation: glitchAppear 0.3s linear forwards; }
+    #effect10 .avatar { border-color: #0ff; animation: glitchContentAvatar 1.5s infinite steps(2,jump-none); }
+    #effect10 .username { color: #f0f; animation: glitchContentText 1.8s infinite steps(2,jump-none) reverse; }
+    #effect10 .message { animation: glitchContentText 2s infinite steps(2,jump-none); }
+    @keyframes glitchAppear { 0% { clip-path: inset(90% 0 0 0); } 25% { clip-path: inset(50% 0 20% 0); } 50% { clip-path: inset(10% 0 60% 0); } 75% { clip-path: inset(30% 0 30% 0); } 100% { clip-path: inset(0 0 0 0); } }
+    #effect10::before, #effect10::after { content: attr(data-text); position: absolute; top: 20px; left: 30px; right: 30px; bottom: 20px; color: #e0e0e0; background: #34495e; overflow: hidden; clip-path: inset(50% 50% 50% 50%); padding: inherit; display: flex; align-items: center; }
+    #effect10::before { left: 28px; text-shadow: -2px 0 #ff00c1; }
+    #effect10::after { left: 32px; text-shadow: -2px 0 #00fff0, 2px 2px #ff00c1; }
+    #effect10.active::before { animation: glitchEffectBefore 0.3s steps(2, end) infinite alternate-reverse; }
+    #effect10.active::after { animation: glitchEffectAfter 0.3s 0.1s steps(2, end) infinite alternate-reverse; }
+    @keyframes glitchEffectBefore { 0% { clip-path: inset(80% 0 10% 0); transform: translateX(-3px); } 50% { clip-path: inset(10% 0 70% 0); transform: translateX(0px); } 100% { clip-path: inset(50% 0 30% 0); transform: translateX(3px); } }
+    @keyframes glitchEffectAfter { 0% { clip-path: inset(10% 0 80% 0); transform: translateX(3px); } 50% { clip-path: inset(70% 0 10% 0); transform: translateX(0px); } 100% { clip-path: inset(30% 0 50% 0); transform: translateX(-3px); } }
+    @keyframes glitchContentAvatar { 0% { transform: translate(0,0); } 25% { transform: translate(2px, -2px); } 50% { transform: translate(-2px, 2px); } 75% { transform: translate(-2px, -2px); } 100% { transform: translate(0,0); } }
+    @keyframes glitchContentText {0% { transform: translate(0,0); } 25% { transform: translate(3px, -1px); } 50% { transform: translate(-1px, 3px); } 75% { transform: translate(-3px, -3px); } 100% { transform: translate(0,0); } }
+
+    #effect11 { background: linear-gradient(45deg, #2a475e, #1b2838); border-left: 10px solid #66c0f4; animation: achievementSlideIn 0.7s ease-out forwards; padding-left: 20px; }
+    #effect11 .avatar { border-color: #66c0f4; }
+    #effect11 .username { color: #c7d5e0; }
+    #effect11 .message::before { content: '🏆 '; font-size: 1.5em; margin-right: 5px; color: #ffd700; }
+    @keyframes achievementSlideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    #effect12 { background: linear-gradient(to bottom right, #ff7e5f, #feb47b); animation: partyBounce 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; }
+    #effect12 .avatar { border-color: #fff; animation: avatarShake 0.5s 0.5s; }
+    #effect12 .username { color: #5d4037; }
+    #effect12::before { content: ''; position: absolute; top: -50px; left: 0; width: 100%; height: 100%; animation: confettiFall 2s 0.2s ease-out forwards; opacity: 0; z-index: 0; box-shadow: 5px 10px 0 0 #f00, 15px 5px 0 0 #0f0, 10px 20px 0 0 #00f, 25px 15px 0 0 #ff0, 30px 25px 0 0 #0ff, 35px 10px 0 0 #f0f, 45px 20px 0 0 #f00, 55px 12px 0 0 #0f0, 50px 30px 0 0 #00f, 60px 5px 0 0 #ff6347, 70px 15px 0 0 #32cd32, 80px 25px 0 0 #1e90ff, 90px 10px 0 0 #ffd700, 100px 20px 0 0 #ff00ff, 110px 30px 0 0 #00ced1; }
+    @keyframes partyBounce { 0% { transform: scale(0.3) translateY(-100px); opacity: 0; } 60% { transform: scale(1.1) translateY(10px); } 80% { transform: scale(0.95) translateY(-5px); } 100% { transform: scale(1) translateY(0); opacity: 1; } }
+    @keyframes avatarShake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } }
+    @keyframes confettiFall { 0% { transform: translateY(-100px) rotate(0deg); opacity: 0; } 100% { transform: translateY(250px) rotate(720deg); opacity: 1; } } /* Increased Y and rotate */
+
+    #effect13 { background: radial-gradient(circle, rgba(75,0,130,0.7) 0%, rgba(25,25,112,0.9) 100%); animation: magicAppear 1.5s ease-out forwards; }
+    #effect13 .avatar { border-color: #e6e6fa; opacity: 0; transform: scale(0.5); animation: magicContentRevealAvatar 1s 0.5s ease-out forwards; }
+    #effect13 .message { opacity: 0; transform: translateY(20px); animation: magicContentRevealText 1s 0.7s ease-out forwards; }
+    #effect13 .username { color: #dda0dd; }
+    #effect13::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, rgba(230,230,250,0.3), rgba(216,191,216,0.3)); opacity: 1; mix-blend-mode: screen; animation: mistFadeOut 2s 0.2s ease-out forwards; pointer-events: none; }
+    @keyframes magicAppear { from { opacity: 0; filter: blur(10px); } to { opacity: 1; filter: blur(0px); } }
+    @keyframes magicContentRevealAvatar { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+    @keyframes magicContentRevealText { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes mistFadeOut { from { opacity: 0.6; } to { opacity: 0; } }
+
+    #effect14 { background-color: #ffd300; border: 5px solid #000; font-family: 'Bangers', cursive; color: #000; animation: comicZoomIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    #effect14 .avatar { border: 4px solid #000; filter: grayscale(30%) contrast(110%); }
+    #effect14 .username { color: #ff3131; text-shadow: 2px 2px #000; }
+    #effect14 .message { font-size: 1.4em; text-shadow: 1px 1px #fff; }
+    #effect14::after { content: 'WOW!'; position: absolute; top: 10px; right: 10px; font-size: 2em; color: #ff3131; text-shadow: -2px -2px #fff, 2px -2px #fff, -2px 2px #fff, 2px 2px #fff, -2px 0 #000, 2px 0 #000, 0 -2px #000, 0 2px #000; transform: rotate(-15deg) scale(0); animation: comicWow 0.5s 0.4s cubic-bezier(0.68, -0.55, 0.26, 1.55) forwards; }
+    @keyframes comicZoomIn { from { transform: scale(0.1) rotate(-180deg); opacity: 0; } to { transform: scale(1) rotate(0deg); opacity: 1; } }
+    @keyframes comicWow { from { transform: rotate(-15deg) scale(0); } to { transform: rotate(-15deg) scale(1); } }
+
+    #effect15 { background: linear-gradient(135deg, #ff758c, #ff7eb3); animation: fadeInHeart 0.6s ease-out forwards; }
+    #effect15 .avatar { border-color: #fff; animation: heartBeatPulse 1.2s infinite ease-in-out; }
+    #effect15 .username { color: #5c001e; }
+    #effect15 .message::after { content: ' ❤️'; color: #ff1a53; display: inline-block; animation: heartBeatIcon 1.2s infinite ease-in-out; animation-delay: 0.1s; }
+    @keyframes fadeInHeart { from { opacity:0; transform: translateY(30px); } to { opacity:1; transform: translateY(0); }}
+    @keyframes heartBeatPulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(255,255,255,0.5); } 50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 30px #ff1a53; } }
+    @keyframes heartBeatIcon { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+
+    /* === EFFECTS 16-20 (NEW SPECIAL EFFECTS) === */
+    #effect16 { background-color: #000000; border: 5px solid #0055ff; box-shadow: inset 0 0 10px #0055ff; font-family: 'Press Start 2P', cursive; color: #ffffff; animation: arcadeEnter 0.5s steps(6, end) forwards; image-rendering: pixelated; }
+    #effect16 .avatar { border: 3px dashed #ffff00; image-rendering: pixelated; width: 64px; height: 64px; }
+    #effect16 .username { color: #ff0000; text-shadow: 2px 2px #550000; }
+    #effect16 .message { font-size: 0.9em; line-height: 1.6; opacity: 0; animation: arcadeTextAppear 0.5s 0.5s forwards; }
+    @keyframes arcadeEnter { from { clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%); } to { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); } }
+    @keyframes arcadeTextAppear { from { opacity: 0; } to { opacity: 1; } }
+
+    #effect17 { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('https://www.transparenttextures.com/patterns/stardust.png'); background-color: #111; animation: cinematicFadeIn 2s ease-out forwards; text-align: center; justify-content: center; flex-direction: column; /* Change flex direction */ }
+    #effect17 .avatar { border: 3px solid #DAA520; box-shadow: 0 0 20px #DAA520; opacity: 0; transform: scale(1.2); animation: cinematicAvatarAppear 1.5s 1s ease-out forwards; margin: 0 auto 15px auto; /* Center avatar */ }
+    #effect17 .message { font-family: 'Cinzel', serif; font-size: 1.3em; color: #f0f0f0; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); opacity: 0; transform: translateY(20px); animation: cinematicTextAppear 1.5s 1.5s ease-out forwards; width:100%; /* ensure it takes full width for centering */ }
+    #effect17 .username { color: #FFD700; }
+    @keyframes cinematicFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes cinematicAvatarAppear { from { opacity: 0; transform: scale(1.3); } to { opacity: 1; transform: scale(1); } }
+    @keyframes cinematicTextAppear { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    #effect18 { background-color: #e0f7fa; border: 2px dashed #00796b; font-family: 'Courier Prime', monospace; color: #004d40; padding: 25px; animation: blueprintDrawIn 1s ease-out forwards; }
+    #effect18 .avatar { border: 2px solid #00796b; position: relative; margin: 10px auto; /* Center avatar slightly better */ }
+    #effect18 .avatar::before, #effect18 .avatar::after { content: ''; position: absolute; background-color: #00796b; opacity: 0; }
+    #effect18.active .avatar::before { animation: drawLineX 0.5s 0.5s forwards; bottom: -10px; left: 0; width: 100%; height: 1px; }
+    #effect18.active .avatar::after { animation: drawLineY 0.5s 0.7s forwards; right: -10px; top: 0; width: 1px; height: 100%; }
+    #effect18 .message { font-size: 1em; opacity: 0; animation: typeBlueprintText 1s 1s forwards; text-align: center; }
+    #effect18 .username { color: #d84315; }
+    @keyframes blueprintDrawIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    @keyframes drawLineX { from { opacity: 0; transform: scaleX(0); } to { opacity: 1; transform: scaleX(1); } }
+    @keyframes drawLineY { from { opacity: 0; transform: scaleY(0); } to { opacity: 1; transform: scaleY(1); } }
+    @keyframes typeBlueprintText { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0px); } }
+
+    #effect19-wrapper { display: flex; justify-content: center; align-items: center; } /* Wrapper for fixed size portal */
+    #effect19 { background: radial-gradient(circle at center, #7b1fa2 , #303f9f , #1a237e ); border-radius: 50%; width: 350px; height: 350px; max-width: 350px; justify-content: center; text-align: center; animation: portalOpen 1.5s cubic-bezier(0.23, 1, 0.32, 1) forwards; position: relative; flex-direction:column; }
+    #effect19::before { content: ''; position: absolute; top: -20%; left: -20%; width: 140%; height: 140%; background-image: conic-gradient(from 0deg, transparent 0%, #ab47bc 20%, #5c6bc0 40%, transparent 60%); border-radius: 50%; animation: portalSwirl 5s linear infinite; z-index: 0; opacity: 0.5; }
+    #effect19 .avatar { border: 4px solid #ede7f6; box-shadow: 0 0 15px #fff; transform: scale(0); animation: portalContentAppearAvatar 1s 0.8s ease-out forwards; margin: 0 auto 10px auto; z-index: 1; }
+    #effect19 .message { color: #fff; text-shadow: 0 0 8px rgba(0,0,0,0.7); transform: scale(0); animation: portalContentAppearText 1s 1s ease-out forwards; z-index: 1; }
+    #effect19 .username { color: #f48fb1; }
+    @keyframes portalOpen { 0% { transform: scale(0); opacity: 0; border-radius: 0%; } 70% { transform: scale(1.1); opacity: 1; border-radius: 40%; } 100% { transform: scale(1); opacity: 1; border-radius: 50%; } }
+    @keyframes portalSwirl { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes portalContentAppearAvatar { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes portalContentAppearText { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    #effect20 { background: linear-gradient(45deg, #FFD700, #F0E68C, #B8860B); border: 3px dashed #A0522D; border-radius: 10px; box-shadow: 5px 5px 15px rgba(0,0,0,0.3); font-family: 'Great Vibes', cursive; color: #3A1F04; padding: 20px; width: 450px; max-width: 90%; transform: rotateY(-90deg); animation: ticketFlipIn 1s ease-out forwards; display:block; /* Override flex for custom inner layout */ }
+    #effect20 .message-content { display: flex; align-items: center; }
+    #effect20 .avatar { border: 3px solid #800000; padding: 3px; background-color: #fff; margin-right: 15px;}
+    #effect20 .text-details { text-align: left; flex-grow: 1; }
+    #effect20 .vip-header { font-family: 'Arial Black', sans-serif; font-size: 1.6em; color: #800000; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; text-shadow: 1px 1px #FFFAF0; }
+    #effect20 .message { font-size: 1em; margin-bottom: 3px; line-height: 1.3; }
+    #effect20 .username { color: #D2691E; font-weight: bold; animation: sparkleText 1.5s infinite; }
+    @keyframes ticketFlipIn { from { transform: rotateY(-90deg) scale(0.8); opacity: 0; } to { transform: rotateY(0deg) scale(1); opacity: 1; } }
+    @keyframes sparkleText { 0%, 100% { text-shadow: 0 0 2px #fff, 0 0 4px #fff, 0 0 6px #B8860B; } 50% { text-shadow: 0 0 4px #fff, 0 0 8px #B8860B, 0 0 12px #B8860B; } }
+
+</style>
+</head>
+<body>
+
+    <div class="controls">
+        <button onclick="showEffect('effect1', 'UserAlpha')">1: Trượt & Sáng</button>
+        <button onclick="showEffect('effect2', 'UserBeta')">2: Pop & Lấp lánh</button>
+        <button onclick="showEffect('effect3', 'UserGamma')">3: Lật 3D</button>
+        <button onclick="showEffect('effect4', 'UserDelta')">4: Đèn chiếu</button>
+        <button onclick="showEffect('effect5', 'UserEpsilon')">5: Rơi nảy</button>
+        <button onclick="showEffect('effect6', 'StarGazer22')">6: Vụ Nổ Thiên Hà</button>
+        <button onclick="showEffect('effect7', 'NeonNinja')">7: Bảng Hiệu Neon</button>
+        <button onclick="showEffect('effect8', 'GoldHoarder')">8: Rương Báu</button>
+        <button onclick="showEffect('effect9', 'CometChaser')">9: Sao Băng</button>
+        <button onclick="showEffect('effect10', 'GlitchMaster')">10: Nhiễu Số</button>
+        <button onclick="showEffect('effect11', 'ProPlayerX')">11: Thành Tựu Game</button>
+        <button onclick="showEffect('effect12', 'PartyAnimal7')">12: Tiệc Confetti</button>
+        <button onclick="showEffect('effect13', 'MysticMage')">13: Hiện Ra Diệu Kỳ</button>
+        <button onclick="showEffect('effect14', 'ComicFan')">14: Truyện Tranh</button>
+        <button onclick="showEffect('effect15', 'LovelyHeart')">15: Nhịp Tim</button>
+        <button onclick="showEffect('effect16', 'PixelPioneer')">16: Game Arcade</button>
+        <button onclick="showEffect('effect17', 'CinemaStar')">17: Phim Điện Ảnh</button>
+        <button onclick="showEffect('effect18', 'TechGuru')">18: Bản Vẽ Kỹ Thuật</button>
+        <button onclick="showEffect('effect19', 'PortalJumper')">19: Cổng Không Gian</button>
+        <button onclick="showEffect('effect20', 'VIPGuest')">20: Vé Vàng VIP</button>
+    </div>
+
+    <!-- Original 5 Effects -->
+    <div class="thank-you-wrapper"><div id="effect1" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message">Cảm ơn <span class="username">UserAlpha</span> đã tặng quà!</p></div></div>
+    <div class="thank-you-wrapper"><div id="effect2" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message">Cảm ơn <span class="username">UserBeta</span> đã tặng quà!</p></div></div>
+    <div class="thank-you-wrapper" id="effect3-wrapper"><div id="effect3" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message">Cảm ơn <span class="username">UserGamma</span> đã tặng quà!</p></div></div>
+    <div class="thank-you-wrapper"><div id="effect4" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message">Cảm ơn <span class="username">UserDelta</span> đã tặng quà!</p></div></div>
+    <div class="thank-you-wrapper"><div id="effect5" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message"></p></div></div>
+
+    <!-- Effects 6-15 -->
+    <div class="thank-you-wrapper"><div id="effect6" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message">Cảm ơn <span class="username">StarGazer22</span> đã chiếu sáng ngày của tôi!</p></div></div>
+    <div class="thank-you-wrapper"><div id="effect7" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message">Tên bạn <span class="username">NeonNinja</span> sáng rực!</p></div></div>
+    <div class="thank-you-wrapper" id="effect8-wrapper"><div id="effect8" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message">Quà của <span class="username">GoldHoarder</span> là một kho báu!</p></div></div>
+    <div class="thank-you-wrapper"><div id="effect9" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message"><span class="username">CometChaser</span>, bạn là một ngôi sao băng!</p></div></div>
+    <div class="thank-you-wrapper"><div id="effect10" class="thank-you-base" data-text=""><img src="" alt="Avatar" class="avatar"><p class="message">Cảm ơn <span class="username">GlitchMaster</span> đã gây nhiễu hệ thống!</p></div></div>
+    <div class="thank-you-wrapper"><div id="effect11" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message"><span class="username">ProPlayerX</span> đã mở khóa thành tựu "Nhà Hảo Tâm Vĩ Đại"!</p></div></div>
+    <div class="thank-you-wrapper"><div id="effect12" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message">Tiệc thôi nào! Cảm ơn <span class="username">PartyAnimal7</span>!</p></div></div>
+    <div class="thank-you-wrapper"><div id="effect13" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message">Một món quà diệu kỳ từ <span class="username">MysticMage</span>!</p></div></div>
+    <div class="thank-you-wrapper"><div id="effect14" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message">SIÊU CẢM ƠN <span class="username">ComicFan</span>!</p></div></div>
+    <div class="thank-you-wrapper"><div id="effect15" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message">Trái tim tôi rung động vì <span class="username">LovelyHeart</span>!</p></div></div>
+
+    <!-- Effects 16-20 -->
+    <div class="thank-you-wrapper"><div id="effect16" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message">PLAYER <span class="username">PixelPioneer</span> IS GENEROUS!</p></div></div>
+    <div class="thank-you-wrapper"><div id="effect17" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message">A Gift From The Incredible <span class="username">CinemaStar</span></p></div></div>
+    <div class="thank-you-wrapper"><div id="effect18" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message"> Gratitude Protocol Executed. Donor: <span class="username">TechGuru</span>.</p></div></div>
+    <div class="thank-you-wrapper" id="effect19-wrapper"><div id="effect19" class="thank-you-base"><img src="" alt="Avatar" class="avatar"><p class="message">Thanks, <span class="username">PortalJumper</span>, for warping into my heart!</p></div></div>
+    <div class="thank-you-wrapper"><div id="effect20" class="thank-you-base">
+        <div class="message-content">
+            <img src="" alt="Avatar" class="avatar">
+            <div class="text-details">
+                <div class="vip-header">VIP GUEST</div>
+                <p class="message">Admit One: <span class="username">VIPGuest</span>. Thank you for the outstanding gift!</p>
+            </div>
+        </div>
+    </div></div>
+
+
+<script>
+    const avatarBaseUrl = "https://i.pravatar.cc/150?u=";
+    let currentActiveEffect = null;
+    let currentActiveButton = null;
+
+    function resetAllAnimations(element) {
+        element.style.animation = 'none';
+        const childrenWithAnimations = element.querySelectorAll('*'); // Get ALL descendants
+        childrenWithAnimations.forEach(child => {
+            // Check if the child itself has an animation style or is known to have one by class
+            if (child.style.animation || child.classList.contains('avatar') || child.classList.contains('message') || child.classList.contains('username')) {
+                 child.style.animation = 'none';
+            }
+            // For pseudo-elements, we rely on removing/re-adding 'active' class or direct style manipulation if needed
+            if (element.id === 'effect10') { // Glitch needs its 'active' class for pseudo animations
+                 element.classList.remove('active');
+            }
+            if (element.id === 'effect18' && (child.classList.contains('avatar'))) {
+                 // Reset pseudo on avatar for blueprint
+                 const avatar = child;
+                 const beforeStyle = window.getComputedStyle(avatar, '::before').animation;
+                 const afterStyle = window.getComputedStyle(avatar, '::after').animation;
+                 if (beforeStyle !== 'none') avatar.style.setProperty('--before-animation', 'none', 'important');
+                 if (afterStyle !== 'none') avatar.style.setProperty('--after-animation', 'none', 'important');
+
+            }
+        });
+    }
+
+
+    function showEffect(effectId, username) {
+        if (currentActiveEffect) {
+            resetAllAnimations(currentActiveEffect);
+            currentActiveEffect.classList.remove('active');
+        }
+        if (currentActiveButton) {
+            currentActiveButton.classList.remove('active-btn');
+        }
+
+        const effectElement = document.getElementById(effectId);
+        if (!effectElement) {
+            console.error("Effect element not found:", effectId);
+            return;
+        }
+
+        // Update avatar
+        const avatarImg = effectElement.querySelector('.avatar');
+        if (avatarImg) {
+            avatarImg.src = avatarBaseUrl + encodeURIComponent(username);
+        }
+
+        // Update username and message (handle different structures)
+        const usernameSpan = effectElement.querySelector('.username');
+        const messageP = effectElement.querySelector('.message'); // Most common
+        let baseMessageText = "Cảm ơn ";
+        let additionalMessage = " đã tặng quà!";
+        let fullMessage = "";
+
+        switch(effectId) {
+            // Original 5
+            case 'effect1': baseMessageText = "Cảm ơn "; additionalMessage = " đã tặng quà!"; break;
+            case 'effect2': baseMessageText = "Cảm ơn "; additionalMessage = " đã tặng quà!"; break;
+            case 'effect3': baseMessageText = "Cảm ơn "; additionalMessage = " đã tặng quà!"; break;
+            case 'effect4': baseMessageText = "Cảm ơn "; additionalMessage = " đã tặng quà!"; break;
+            case 'effect5':
+                // Special handling for multi-span message
+                if (messageP) {
+                    messageP.innerHTML =
+                        `<span class="text-part">Cảm ơn </span>` +
+                        `<span class="text-part username">${username}</span> ` +
+                        `<span class="text-part">đã tặng </span>` +
+                        `<span class="text-part">quà!</span>`;
+                    const parts = messageP.querySelectorAll('.text-part');
+                    parts.forEach((part, index) => {
+                        part.style.animation = 'none'; // Reset first
+                        void part.offsetWidth; // Reflow
+                        part.style.animation = `textCascadeOriginal 0.3s ease-out ${0.3 + index * 0.1}s forwards`;
+                    });
+                }
+                fullMessage = "SKIP"; // Indicate message handled
+                break;
+            // Effects 6-15
+            case 'effect6': baseMessageText = "Cảm ơn "; additionalMessage = " đã chiếu sáng ngày của tôi!"; break;
+            case 'effect7': baseMessageText = "Tên bạn "; additionalMessage = " sáng rực!"; break;
+            case 'effect8': baseMessageText = "Quà của "; additionalMessage = " là một kho báu!"; break;
+            case 'effect9': baseMessageText = ""; additionalMessage = `, bạn là một ngôi sao băng!`; break;
+            case 'effect10':
+                baseMessageText = "Cảm ơn "; additionalMessage = " đã gây nhiễu hệ thống!";
+                effectElement.dataset.text = `Cảm ơn ${username} đã gây nhiễu hệ thống!`;
+                break;
+            case 'effect11': baseMessageText = ""; additionalMessage = ` đã mở khóa thành tựu "Nhà Hảo Tâm Vĩ Đại"!`; break;
+            case 'effect12': baseMessageText = "Tiệc thôi nào! Cảm ơn "; additionalMessage = "!"; break;
+            case 'effect13': baseMessageText = "Một món quà diệu kỳ từ "; additionalMessage = "!"; break;
+            case 'effect14': baseMessageText = "SIÊU CẢM ƠN "; additionalMessage = "!"; break;
+            case 'effect15': baseMessageText = "Trái tim tôi rung động vì "; additionalMessage = "!"; break;
+            // Effects 16-20
+            case 'effect16': baseMessageText = "PLAYER "; additionalMessage = " IS GENEROUS!"; break;
+            case 'effect17': baseMessageText = "A Gift From The Incredible "; additionalMessage = ""; break;
+            case 'effect18': baseMessageText = "Gratitude Protocol Executed. Donor: "; additionalMessage = "."; break;
+            case 'effect19': baseMessageText = "Thanks, "; additionalMessage = ", for warping into my heart!"; break;
+            case 'effect20': // Handled by specific structure
+                 const vipUsernameSpan = effectElement.querySelector('.text-details .username');
+                 if (vipUsernameSpan) vipUsernameSpan.textContent = username;
+                 fullMessage = "SKIP";
+                 break;
+
+            default: baseMessageText = "Cảm ơn "; additionalMessage = " đã tặng quà!";
+        }
+
+        if (fullMessage !== "SKIP") {
+            if (usernameSpan && !messageP) { // Only username span present in some simple cases
+                 usernameSpan.textContent = username;
+            } else if (messageP) {
+                // Reconstruct message, ensuring .username span is correctly placed
+                const userSpanHTML = `<span class="username">${username}</span>`;
+                let finalMsg = "";
+                if (baseMessageText.endsWith(" ")) { // Username directly after base
+                    finalMsg = baseMessageText + userSpanHTML + additionalMessage;
+                } else if (additionalMessage.startsWith(",")) { // Username at start of additional
+                     finalMsg = baseMessageText + userSpanHTML + additionalMessage;
+                }
+                else { // Default case: User between base and additional
+                    finalMsg = baseMessageText + userSpanHTML + " " + additionalMessage;
+                }
+                 // Handle cases where base or additional might be empty for username-only messages
+                if(baseMessageText === "" && additionalMessage.startsWith(",")){ // e.g. effect9
+                    finalMsg = userSpanHTML + additionalMessage;
+                } else if (baseMessageText !== "" && additionalMessage === ""){ // e.g. effect17
+                    finalMsg = baseMessageText + userSpanHTML;
+                }
+
+                messageP.innerHTML = finalMsg.trim();
+            }
+        }
+
+
+        // Trigger reflow before re-adding active class for animations
+        void effectElement.offsetWidth;
+        // Trigger reflow for all children that might have animations.
+        const allChildren = effectElement.querySelectorAll('*');
+        allChildren.forEach(child => void child.offsetWidth);
+
+
+        effectElement.classList.add('active');
+        currentActiveEffect = effectElement;
+
+        const clickedButton = Array.from(document.querySelectorAll('.controls button')).find(btn => btn.getAttribute('onclick').includes(`'${effectId}'`));
+        if (clickedButton) {
+            clickedButton.classList.add('active-btn');
+            currentActiveButton = clickedButton;
+        }
+
+        let scrollTarget = effectElement;
+        if(effectElement.parentElement.classList.contains('thank-you-wrapper')) {
+            scrollTarget = effectElement.parentElement;
+        }
+        scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Optional: Show a default effect on load
+    // document.addEventListener('DOMContentLoaded', () => {
+    //     showEffect('effect1', 'WelcomeUser');
+    // });
+</script>
+
+</body>
+</html>

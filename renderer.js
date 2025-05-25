@@ -5,6 +5,15 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const AdmZip = require('adm-zip');
+const { machineIdSync } = require('node-machine-id');
+const dotenv = require('dotenv');
+
+const envPath = path.join(__dirname, '.env');
+
+dotenv.config({ path: envPath });
+
+const DOMAIN = process.env.DOMAIN;
+
 
 let tiktokLive;
 let isLive = false;
@@ -44,20 +53,21 @@ document.getElementById('toggleLive').addEventListener('click', async () => {
     }).finally(err => {
       hideLoading();
     }
-  
-  );
 
-  
+    );
+
+
 
     tiktokLive.on('gift', data => {
       if (data.giftType === 1 && !data.repeatEnd) return;
       console.log('Received gift:', data);
       const giftData = {
         username: data.nickname || data.uniqueId,
+        avatar: data.profilePictureUrl,
         name: data.giftName,
         count: `${data.diamondCount} Diamonds`
       };
- 
+
       overlayServer.sendGift(giftData);
     });
 
@@ -79,17 +89,53 @@ document.getElementById('toggleLive').addEventListener('click', async () => {
 let effectsData = [];
 let userDataPath = '';
 
+async function generateEffectsDataJson(userDataPath) {
+  const assetsDir = path.join(userDataPath, 'main-assets', 'assets');
+  const dataFile = path.join(assetsDir, 'data.json');
+
+  const effects = [];
+
+  const effectFolders = fs.readdirSync(assetsDir, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory());
+
+  for (const dirent of effectFolders) {
+    const effectName = dirent.name;
+    const effectPath = path.join(assetsDir, effectName);
+    const files = fs.readdirSync(effectPath);
+
+    const gifs = files.filter(f => f.toLowerCase().endsWith('.gif'));
+    const sounds = files.filter(f => f.toLowerCase().endsWith('.mp3'));
+
+    effects.push({
+      name: effectName,
+      gifs: gifs.join(', '),
+      sounds: sounds.join(', ')
+    });
+  }
+
+  fs.writeFileSync(dataFile, JSON.stringify(effects, null, 2), 'utf-8');
+  console.log(`✅ Đã tạo file data.json tại: ${dataFile}`);
+}
+
+
 ipcRenderer.invoke('get-user-data-path').then(p => {
   userDataPath = p;
-  const dataPath = path.join(userDataPath, 'main-assets', 'assets', 'data.json');
+  showLoading("Loading assets...");
+  generateEffectsDataJson(userDataPath).then(() => {
+    const dataPath = path.join(userDataPath, 'main-assets', 'assets', 'data.json');
 
-  try {
-    effectsData = JSON.parse(fs.readFileSync(dataPath));
-    populateEffectSelects();
-  } catch (e) {
-    console.log('Cannot load effects data:', e);
-  }
+    try {
+      effectsData = JSON.parse(fs.readFileSync(dataPath));
+      populateEffectSelects();
+    } catch (e) {
+      console.log('Cannot load effects data:', e);
+    }
+    finally { 
+      hideLoading();
+    }
+  });
 });
+
 
 function populateEffectSelects() {
   const effectsList = document.getElementById('effects-list');
@@ -132,6 +178,7 @@ function populateEffectSelects() {
   addEffectRow.addEventListener('click', () => {
     effectsList.appendChild(createEffectRow());
   });
+
 }
 
 window.getNoThankGiftNames = () => {
@@ -153,16 +200,16 @@ window.getEffectMap = () => {
 };
 
 
-function showLoading(text){
-  const overlay = document.getElementById('overlay');  
+function showLoading(text) {
+  const overlay = document.getElementById('overlay');
   const loadingText = document.getElementById('loading-text');
   overlay.style.display = 'flex';
   loadingText.innerText = text;
 }
 
 
-function hideLoading(){
-  const overlay = document.getElementById('overlay');  
+function hideLoading() {
+  const overlay = document.getElementById('overlay');
   overlay.style.display = 'none';
 }
 
@@ -205,3 +252,77 @@ async function downloadAssets() {
     console.log('Lỗi trong quá trình tải hoặc giải nén:', error);
   }
 }
+
+
+
+// xử lý license
+function getMachineId() {
+  try {
+    return machineIdSync();
+  } catch {
+    return null;
+  }
+}
+
+
+
+async function checkEnterLicense(license) {
+  const machine_id = getMachineId();
+  const app_name = "tiktok_live";
+
+  try {
+    const res = await axios.post(`${DOMAIN}/api/license-key/verify`, {
+      license,
+      machine_id,
+      app_name
+    });
+
+    return res.data;
+  } catch (err) {
+    console.error('Lỗi khi gọi API:', err.message);
+    return { valid: false, license_type: 'free' };
+  }
+}
+
+
+document.getElementById('submit-license').addEventListener('click', async () => {
+  const license = document.getElementById('license-input').value.trim();
+
+  if (!license) {
+    alert("Vui lòng nhập license!");
+    return;
+  }
+
+  const result = await checkEnterLicense(license);
+
+  if (result.valid) {
+    ipcRenderer.send('save-license', license);
+    alert('License hợp lệ! Vui lòng khởi động lại ứng dụng.');
+  } else {
+    alert('License không hợp lệ.');
+  }
+});
+let licenseTypeGlobal = 'free';
+
+
+
+async function getLicenseInfoFromMain() {
+  const { licenseType, expiredDate } = await ipcRenderer.invoke('get-license-info');
+  console.log('License Type:', licenseType);
+  console.log('Expired Date:', expiredDate);
+
+  if (licenseType === 'free') {
+    document.getElementById('main').remove();
+    alert("Vui lòng nhập license để sử dụng ứng dụng.");
+
+  } else {
+    licenseTypeGlobal = 'vip'
+    document.getElementById('license-form').remove();
+
+
+  }
+
+
+}
+
+getLicenseInfoFromMain()

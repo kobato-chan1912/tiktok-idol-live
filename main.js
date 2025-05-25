@@ -2,6 +2,18 @@ const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const fsPromise = require('fs').promises;
+const { checkLicense } = require('./license');
+const LICENSE_FILE = path.join(app.getPath('userData'), 'license.json');
+const dotenv = require('dotenv');
+const express = require('express');
+
+
+// __dirname sẽ là đường dẫn tới thư mục trong asar
+const envPath = path.join(__dirname, '.env');
+
+// Load thủ công từ đường dẫn cụ thể
+dotenv.config({ path: envPath });
+
 let mainWindow;
 
 
@@ -25,6 +37,7 @@ function createWindow() {
 }
 
 app.on('ready', () => {
+  startStaticServerIfNeeded();
   createWindow(); 
 });
 
@@ -83,3 +96,58 @@ ipcMain.handle('get-user-data-path', () => {
   return app.getPath('userData');
   // return path.join("")
 });
+
+
+function startStaticServerIfNeeded() {
+  const expressApp = express();
+  const assetPath = path.join(app.getPath('userData'), 'main-assets');
+
+  if (fs.existsSync(assetPath)) {
+    expressApp.use(express.static(assetPath));
+
+    expressApp.listen(4001, () => {
+      console.log(`Localhost static server started at http://localhost:4001/`);
+    });
+  } else {
+    console.log('main-assets folder not found, skipping server start.');
+  }
+}
+
+
+
+ipcMain.on('save-license', (event, license) => {
+  const data = { license };
+  fs.writeFileSync(LICENSE_FILE, JSON.stringify(data));
+});
+
+
+
+
+
+let licenseCache = null;
+
+ipcMain.handle('get-license-info', async () => {
+  // Nếu cache chưa có, kiểm tra lại
+  if (!licenseCache) {
+    const { valid, licenseType, expiredDate } = await checkLicense();
+
+    global.licenseType = licenseType;
+    global.valid = valid;
+    global.expiredDate = expiredDate;
+
+    licenseCache = {
+      licenseType,
+      expiredDate
+    };
+
+    console.log('[Checked] License:', licenseType, expiredDate);
+  }
+
+  return {
+    licenseType: global.licenseType || 'free',
+    expiredDate: global.expiredDate || null
+  };
+});
+
+
+
