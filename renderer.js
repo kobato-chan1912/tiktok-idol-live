@@ -91,6 +91,11 @@ let userDataPath = '';
 
 async function generateEffectsDataJson(userDataPath) {
   const assetsDir = path.join(userDataPath, 'main-assets', 'assets');
+
+  if (!fs.existsSync(assetsDir)) {
+    return;
+  }
+
   const dataFile = path.join(assetsDir, 'data.json');
 
   const effects = [];
@@ -130,7 +135,7 @@ ipcRenderer.invoke('get-user-data-path').then(p => {
     } catch (e) {
       console.log('Cannot load effects data:', e);
     }
-    finally { 
+    finally {
       hideLoading();
     }
   });
