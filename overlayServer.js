@@ -39,7 +39,8 @@ server.listen(4000, async () => {
 module.exports = {
   sendGift: (gift) => {
     const effectMap = window.getEffectMap();
-    const effectSetting = effectMap[gift.name];
+    const giftName = gift.name.toLowerCase();
+    const effectSetting = effectMap[giftName];
     const noThanks = window.getNoThankGiftNames();
     let is_thank = true;
     if (noThanks.includes(gift.name)) {

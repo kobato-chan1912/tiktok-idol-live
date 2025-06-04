@@ -1,4 +1,7 @@
-const socket = io();
+const socket = io({
+  transports: ['websocket']
+});
+
 const frame = document.querySelector('body');
 
 

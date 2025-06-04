@@ -132,6 +132,8 @@ ipcRenderer.invoke('get-user-data-path').then(p => {
     try {
       effectsData = JSON.parse(fs.readFileSync(dataPath));
       populateEffectSelects();
+      loadEffectMap();
+
     } catch (e) {
       console.log('Cannot load effects data:', e);
     }
@@ -142,43 +144,45 @@ ipcRenderer.invoke('get-user-data-path').then(p => {
 });
 
 
+function createEffectRow(giftName = '', selectedEffect = '') {
+  const row = document.createElement('div');
+  row.className = 'effect-row';
+  row.style.display = 'flex';
+  row.style.gap = '10px';
+  row.style.marginBottom = '6px';
+
+  const input = document.createElement('input');
+  input.placeholder = 'Tên loại quà';
+  input.className = 'gift-name form-control';
+  input.value = giftName;
+
+  const select = document.createElement('select');
+  select.className = 'effect-select form-select';
+
+  effectsData.forEach(eff => {
+    const opt = document.createElement('option');
+
+    opt.value = eff.name;
+    opt.textContent = eff.name;
+    if (eff.name === selectedEffect) opt.selected = true;
+    select.appendChild(opt);
+  });
+
+  const delBtn = document.createElement('button');
+  delBtn.textContent = '❌';
+  delBtn.onclick = () => row.remove();
+
+  row.appendChild(input);
+  row.appendChild(select);
+  row.appendChild(delBtn);
+  return row;
+}
+
 function populateEffectSelects() {
   const effectsList = document.getElementById('effects-list');
   const addEffectRow = document.getElementById('add-effect');
 
-  function createEffectRow(giftName = '', selectedEffect = '') {
-    const row = document.createElement('div');
-    row.className = 'effect-row';
-    row.style.display = 'flex';
-    row.style.gap = '10px';
-    row.style.marginBottom = '6px';
 
-    const input = document.createElement('input');
-    input.placeholder = 'Tên loại quà';
-    input.className = 'gift-name form-control';
-    input.value = giftName;
-
-    const select = document.createElement('select');
-    select.className = 'effect-select form-select';
-
-    effectsData.forEach(eff => {
-      const opt = document.createElement('option');
-
-      opt.value = eff.name;
-      opt.textContent = eff.name;
-      if (eff.name === selectedEffect) opt.selected = true;
-      select.appendChild(opt);
-    });
-
-    const delBtn = document.createElement('button');
-    delBtn.textContent = '❌';
-    delBtn.onclick = () => row.remove();
-
-    row.appendChild(input);
-    row.appendChild(select);
-    row.appendChild(delBtn);
-    return row;
-  }
 
   addEffectRow.addEventListener('click', () => {
     effectsList.appendChild(createEffectRow());
@@ -191,11 +195,14 @@ window.getNoThankGiftNames = () => {
     .split('\n').map(x => x.trim()).filter(Boolean);
 };
 
+// const effectMapPath = path.join(userDataPath, 'effect-map.json');
+const effectMapPath = path.join('', 'effect-map.json');
+
 window.getEffectMap = () => {
   const map = {};
   const rows = document.querySelectorAll('.effect-row');
   rows.forEach(row => {
-    const gift = row.querySelector('.gift-name').value.trim();
+    const gift = row.querySelector('.gift-name').value.trim().toLowerCase();
     const effect = row.querySelector('.effect-select').value;
     if (gift && effect && effect !== 'none') {
       map[gift] = effectsData.find(e => e.name === effect);
@@ -203,6 +210,41 @@ window.getEffectMap = () => {
   });
   return map;
 };
+
+function loadEffectMap() {
+  if (!fs.existsSync(effectMapPath)) {
+    console.warn('Effect map file does not exist.');
+    return;
+  }
+
+  try {
+    const raw = fs.readFileSync(effectMapPath, 'utf-8');
+    const savedMap = JSON.parse(raw);
+
+    Object.entries(savedMap).forEach(([gift, effectObj]) => {
+      let row = createEffectRow(gift, effectObj.name);
+      const effectsList = document.getElementById('effects-list');
+      effectsList.appendChild(row);
+    });
+
+
+    console.log('Effect map loaded from:', effectMapPath);
+  } catch (err) {
+    console.error('Failed to load effect map:', err);
+  }
+};
+
+
+function saveEffectMap() {
+  const effectMap = window.getEffectMap();
+  try {
+    fs.writeFileSync(effectMapPath, JSON.stringify(effectMap, null, 2), 'utf-8');
+    alert('Đã lưu hiệu ứng!');
+  } catch (err) {
+    console.error('Failed to save effect map:', err);
+  }
+};
+
 
 
 function showLoading(text) {
