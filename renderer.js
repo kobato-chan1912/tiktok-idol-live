@@ -122,7 +122,7 @@ ipcRenderer.invoke('get-user-data-path').then(p => {
     try {
       effectsData = JSON.parse(fs.readFileSync(dataPath));
       populateEffectSelects();
-      loadEffectMap();
+      // loadEffectMap();
 
     } catch (e) {
       console.log('Cannot load effects data:', e);
@@ -132,6 +132,20 @@ ipcRenderer.invoke('get-user-data-path').then(p => {
     }
   });
 });
+
+
+function showEffectByClicking(row) {
+  const giftName = row.querySelector('.gift-name').value.trim().toLowerCase();
+  const giftData = {
+    username: null,
+    avatar: null, 
+    name: giftName,
+    count: 1,
+    selfClick: true 
+  };
+  overlayServer.sendGift(giftData);
+  showEffect(effect, giftName);
+}
 
 
 function createEffectRow(giftName = '', selectedEffect = '') {
@@ -159,12 +173,22 @@ function createEffectRow(giftName = '', selectedEffect = '') {
   });
 
   const delBtn = document.createElement('button');
-  delBtn.textContent = '❌';
+  delBtn.className = 'btn btn-danger';
+  delBtn.textContent = 'Xóa';
   delBtn.onclick = () => row.remove();
+
+
+  // Tạo nút hiệu ứng
+  const effectBtn = document.createElement('button');
+  effectBtn.className = 'btn btn-primary';
+  effectBtn.textContent = 'Show';
+  effectBtn.onclick = () => showEffectByClicking(row);
+
 
   row.appendChild(input);
   row.appendChild(select);
   row.appendChild(delBtn);
+  row.appendChild(effectBtn);
   return row;
 }
 
@@ -224,16 +248,37 @@ function loadEffectMap() {
   }
 };
 
-
-function saveEffectMap() {
+async function saveEffectMap() {
   const effectMap = window.getEffectMap();
+  const filePath = await ipcRenderer.invoke('dialog:saveFile', 'my-username.json');
   try {
-    fs.writeFileSync(effectMapPath, JSON.stringify(effectMap, null, 2), 'utf-8');
-    alert('Đã lưu hiệu ứng!');
+    fs.writeFileSync(filePath, JSON.stringify(effectMap, null, 2), 'utf-8');
   } catch (err) {
     console.error('Failed to save effect map:', err);
   }
 };
+
+async function loadEffectMapFromFile() {
+  const filePath = await ipcRenderer.invoke('dialog:openFile', 'json');
+  if (!filePath) return;
+
+  try {
+    const raw = fs.readFileSync(filePath, 'utf-8');
+    const loadedMap = JSON.parse(raw);
+
+    const effectsList = document.getElementById('effects-list');
+    effectsList.innerHTML = ''; // Clear existing rows
+
+    Object.entries(loadedMap).forEach(([gift, effectObj]) => {
+      let row = createEffectRow(gift, effectObj.name);
+      effectsList.appendChild(row);
+    });
+
+    console.log('Effect map loaded from:', filePath);
+  } catch (err) {
+    console.error('Failed to load effect map from file:', err);
+  }
+}
 
 
 

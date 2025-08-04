@@ -153,7 +153,7 @@ socket.on('show-gift', gift => {
   console.log('Received gift:', gift);
 
 
-  const amount = parseInt(gift.count) ;
+  const amount = parseInt(gift.count);
 
 
 
@@ -163,8 +163,11 @@ socket.on('show-gift', gift => {
 
   if (gift.is_thank && type == 1) {
     // random 1 to 20
-    const effectId = `effect${Math.floor(Math.random() * 20) + 1}`;
-    showEffect(effectId, gift.username, gift.avatar);
+    setTimeout(() => {
+      const effectId = `effect${Math.floor(Math.random() * 20) + 1}`;
+      showEffect(effectId, gift.username, gift.avatar);
+    }, 3000);
+
   }
 
 

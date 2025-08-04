@@ -6,7 +6,7 @@ const { checkLicense } = require('./license');
 const LICENSE_FILE = path.join(app.getPath('userData'), 'license.json');
 const dotenv = require('dotenv');
 const express = require('express');
-
+ const { TikTokLiveConnection } = require('tiktok-live-connector');
 
 // __dirname sẽ là đường dẫn tới thư mục trong asar
 const envPath = path.join(__dirname, '.env');
@@ -58,12 +58,30 @@ app.on('activate', function () {
   }
 });
 
+
+
+// open file dialog json
+ipcMain.handle('dialog:openFile', async (event) => {
+  const result = await dialog.showOpenDialog({
+    title: 'Open JSON File',
+    filters: [
+      { name: 'JSON Files', extensions: ['json'] },
+    ],
+    properties: ['openFile']
+  });
+  
+  if (result.canceled) {  
+    return null; // Người dùng hủy chọn
+  }
+  return result.filePaths[0]; // Trả về đường dẫn file đã chọn
+});
+
 ipcMain.handle('dialog:saveFile', async (event, defaultName) => {
   const result = await dialog.showSaveDialog({
     title: 'Save File',
-    defaultPath: path.join(app.getPath('documents'), defaultName || 'test.xlsx'),
+    defaultPath: path.join(app.getPath('documents'), defaultName || 'my-username.json'),
     filters: [
-      { name: 'Excel Files', extensions: ['xlsx'] },
+      { name: 'JSON Files', extensions: ['json'] },
     ],
   });
 

@@ -43,7 +43,7 @@ module.exports = {
     const effectSetting = effectMap[giftName];
     const noThanks = window.getNoThankGiftNames();
     let is_thank = true;
-    if (noThanks.includes(gift.name)) {
+    if (noThanks.includes(gift.name) || gift.selfClick) {
       is_thank = false;
     }
 
