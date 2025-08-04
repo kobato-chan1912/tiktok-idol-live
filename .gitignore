@@ -8,3 +8,4 @@ package-lock.json
 build/
 assets/
 .env
+effect-map.json
