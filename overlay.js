@@ -153,7 +153,7 @@ socket.on('show-gift', gift => {
   console.log('Received gift:', gift);
 
 
-  const amount = gift.count;
+  const amount = parseInt(gift.count) ;
 
 
 

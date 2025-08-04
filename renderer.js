@@ -29,17 +29,7 @@ document.getElementById('toggleLive').addEventListener('click', async () => {
   if (!isLive) {
     showLoading("Đang kết nối tới live...");
     // Start TikTok Live
-    tiktokLive = new WebcastPushConnection(username, {
-      clientParams: {
-        "app_language": "vi-VN",
-        "device_platform": "web"
-      },
-
-      wsClientParams: {
-        "app_language": "vi-VN",
-      },
-
-    });
+    tiktokLive = new TikTokLiveConnection(username);
 
     tiktokLive.connect().then(state => {
       console.log(`Connected to ${username}`);
@@ -60,12 +50,12 @@ document.getElementById('toggleLive').addEventListener('click', async () => {
 
     tiktokLive.on('gift', data => {
       console.log('Received gift:', data);
-      if (data.repeatEnd) return;
+      if (data.repeatEnd == 1) return;
       const giftData = {
-        username: data.nickname || data.uniqueId,
-        avatar: data.profilePictureUrl,
-        name: data.giftName,
-        count: `${data.diamondCount} Diamonds`
+        username: data.user.nickname || data.user.userId,
+        avatar: data.user.profilePicture.urls[0],
+        name: data.giftDetails.giftName,
+        count: `${data.repeatCount}`
       };
 
       overlayServer.sendGift(giftData);
@@ -195,8 +185,8 @@ window.getNoThankGiftNames = () => {
     .split('\n').map(x => x.trim()).filter(Boolean);
 };
 
-// const effectMapPath = path.join(userDataPath, 'effect-map.json');
-const effectMapPath = path.join('', 'effect-map.json');
+const effectMapPath = path.join(userDataPath, 'effect-map.json');
+// const effectMapPath = path.join('', 'effect-map.json');
 
 window.getEffectMap = () => {
   const map = {};
