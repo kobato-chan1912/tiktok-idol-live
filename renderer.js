@@ -1,4 +1,3 @@
-const { WebcastPushConnection, TikTokLiveConnection } = require('tiktok-live-connector');
 const overlayServer = require('./overlayServer');
 const { ipcRenderer } = require('electron');
 const fs = require('fs');
@@ -15,63 +14,43 @@ dotenv.config({ path: envPath });
 const DOMAIN = process.env.DOMAIN;
 
 
-let tiktokLive;
 let isLive = false;
 
 document.getElementById('toggleLive').addEventListener('click', async () => {
   const username = document.getElementById('username').value.trim();
+  if (!username) return alert('Nhập username TikTok');
 
-  if (!username) {
-    alert('Vui lòng nhập username TikTok!');
-    return;
-  }
+  const btn = document.getElementById('toggleLive');
+  btn.disabled = true;
+  btn.innerText = 'Đang xử lý...';
 
   if (!isLive) {
-    showLoading("Đang kết nối tới live...");
-    // Start TikTok Live
-    tiktokLive = new TikTokLiveConnection(username);
-
-    tiktokLive.connect().then(state => {
-      console.log(`Connected to ${username}`);
-      document.getElementById('toggleLive').innerText = 'Dừng Live';
-      document.getElementById('toggleLive').className = 'btn btn-danger';
+    const res = await ipcRenderer.invoke('start-live', username);
+    if (res.success) {
       isLive = true;
+      btn.innerText = 'Dừng Live';
+      btn.className = 'btn btn-danger';
       alert('Đã kết nối tới live!');
-    }).catch(err => {
-      console.error(err);
-      alert('Không thể kết nối tới live.');
-    }).finally(err => {
-      hideLoading();
+    } else {
+      alert('Không thể kết nối: ' + res.error);
+      btn.innerText = 'Bắt đầu Live';
     }
-
-    );
-
-
-
-    tiktokLive.on('gift', data => {
-      console.log('Received gift:', data);
-      if (data.repeatEnd == 1) return;
-      const giftData = {
-        username: data.user.nickname || data.user.userId,
-        avatar: data.user.profilePicture.urls[0],
-        name: data.giftDetails.giftName,
-        count: `${data.repeatCount}`
-      };
-
-      overlayServer.sendGift(giftData);
-    });
-
   } else {
-    await tiktokLive.disconnect();
-    overlayServer.clearGift();
-    // overlayServer.closeServer?.(); // Nếu muốn tắt hẳn server
+    await ipcRenderer.invoke('stop-live');
     isLive = false;
-    document.getElementById('toggleLive').innerText = 'Bắt đầu Live';
-    document.getElementById('toggleLive').className = 'btn btn-primary';
+    btn.innerText = 'Bắt đầu Live';
+    btn.className = 'btn btn-primary';
     console.log('Ngắt kết nối.');
   }
+
+  btn.disabled = false;
 });
 
+
+ipcRenderer.on('gift', (event, gift) => {
+  console.log('Gift:', gift);
+  overlayServer?.sendGift(gift); // nếu bạn có overlayServer
+});
 
 
 

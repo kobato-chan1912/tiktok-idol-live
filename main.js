@@ -6,7 +6,7 @@ const { checkLicense } = require('./license');
 const LICENSE_FILE = path.join(app.getPath('userData'), 'license.json');
 const dotenv = require('dotenv');
 const express = require('express');
- const { TikTokLiveConnection } = require('tiktok-live-connector');
+const { TikTokLiveConnection } = require('tiktok-live-connector');
 
 // __dirname sẽ là đường dẫn tới thư mục trong asar
 const envPath = path.join(__dirname, '.env');
@@ -15,6 +15,8 @@ const envPath = path.join(__dirname, '.env');
 dotenv.config({ path: envPath });
 
 let mainWindow;
+let tiktokLive = null;
+
 
 
 function createWindow() {
@@ -59,6 +61,44 @@ app.on('activate', function () {
 });
 
 
+ipcMain.handle('start-live', async (event, username) => {
+  try {
+    tiktokLive = new TikTokLiveConnection(username);
+    await tiktokLive.connect();
+
+    tiktokLive.on('gift', data => {
+      console.log('Received gift:', data);
+      if (data.repeatEnd === 1) return;
+
+      const giftData = {
+        username: data.user.nickname || data.user.userId,
+        avatar: data.user.profilePicture.urls[0],
+        name: data.giftDetails.giftName,
+        count: `${data.repeatCount}`
+      };
+
+      mainWindow.webContents.send('gift', giftData);
+
+    });
+
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('stop-live', async () => {
+  try {
+    if (tiktokLive) {
+      await tiktokLive.disconnect();
+      tiktokLive = null;
+    }
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
 
 // open file dialog json
 ipcMain.handle('dialog:openFile', async (event) => {
@@ -69,8 +109,8 @@ ipcMain.handle('dialog:openFile', async (event) => {
     ],
     properties: ['openFile']
   });
-  
-  if (result.canceled) {  
+
+  if (result.canceled) {
     return null; // Người dùng hủy chọn
   }
   return result.filePaths[0]; // Trả về đường dẫn file đã chọn
