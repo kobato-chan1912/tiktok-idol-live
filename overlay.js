@@ -152,45 +152,56 @@ socket.on('show-gift', gift => {
 
   console.log('Received gift:', gift);
 
-  if (gift.is_thank) {
+
+  const amount = gift.count;
+
+
+
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const type = urlParams.get('type');
+
+  if (gift.is_thank && type == 1) {
     // random 1 to 20
     const effectId = `effect${Math.floor(Math.random() * 20) + 1}`;
     showEffect(effectId, gift.username, gift.avatar);
-
-    //     const giftBox = document.createElement('div');
-    //     giftBox.className = 'gift-box';
-    //     giftBox.innerText = `🎁 Cảm ơn ${gift.username} đã tặng ${gift.name} x${gift.count}`;
-    //     frame.appendChild(giftBox);
-    // 
-    //     setTimeout(() => {
-    //       giftBox.style.animation = 'fadeout 1s forwards';
-    //       setTimeout(() => giftBox.remove(), 1000);
-    //     }, 4000);
   }
 
-  if (gift.main_effect) {
-    const effect = {
-      gif: gift.gif,
-      sound: gift.sound,
+
+
+
+  if (gift.main_effect && type == 2) {
+    for (let i = 0; i < amount; i++) {
+
+
+      const effect = {
+        gif: gift.gif,
+        sound: gift.sound,
+      }
+      const effectBox = document.createElement('div');
+      effectBox.className = 'effect-box';
+
+      const gif = document.createElement('img');
+      gif.className = 'effect-gif';
+      gif.src = effect.gif;
+      console.log('effect.gif', effect.gif);
+      effectBox.appendChild(gif);
+      frame.appendChild(effectBox);
+
+      const audio = new Audio(effect.sound);
+      audio.play();
+
+      setTimeout(() => {
+        effectBox.style.animation = 'fadeout 1s forwards';
+        setTimeout(() => effectBox.remove(), 1000);
+      }, 5000);
+
     }
-    const effectBox = document.createElement('div');
-    effectBox.className = 'effect-box';
 
-    const gif = document.createElement('img');
-    gif.className = 'effect-gif';
-    gif.src = effect.gif;
-    console.log('effect.gif', effect.gif);
-    effectBox.appendChild(gif);
-    frame.appendChild(effectBox);
-
-    const audio = new Audio(effect.sound);
-    audio.play();
-
-    setTimeout(() => {
-      effectBox.style.animation = 'fadeout 1s forwards';
-      setTimeout(() => effectBox.remove(), 1000);
-    }, 5000);
   }
+
+
+
 });
 
 

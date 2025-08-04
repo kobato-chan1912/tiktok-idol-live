@@ -59,8 +59,8 @@ document.getElementById('toggleLive').addEventListener('click', async () => {
 
 
     tiktokLive.on('gift', data => {
-      if (data.giftType === 1 && !data.repeatEnd) return;
       console.log('Received gift:', data);
+      if (data.repeatEnd) return;
       const giftData = {
         username: data.nickname || data.uniqueId,
         avatar: data.profilePictureUrl,
