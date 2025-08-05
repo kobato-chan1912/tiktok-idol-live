@@ -6,7 +6,7 @@ const { checkLicense } = require('./license');
 const LICENSE_FILE = path.join(app.getPath('userData'), 'license.json');
 const dotenv = require('dotenv');
 const express = require('express');
-const { TikTokLiveConnection } = require('tiktok-live-connector');
+const { TikTokLiveConnection, WebcastPushConnection } = require('tiktok-live-connector');
 
 // __dirname sẽ là đường dẫn tới thư mục trong asar
 const envPath = path.join(__dirname, '.env');
@@ -63,18 +63,18 @@ app.on('activate', function () {
 
 ipcMain.handle('start-live', async (event, username) => {
   try {
-    tiktokLive = new TikTokLiveConnection(username);
+    tiktokLive = new WebcastPushConnection(username);
     await tiktokLive.connect();
 
     tiktokLive.on('gift', data => {
-      console.log('Received gift:', data);
-      if (data.repeatEnd === 1) return;
+      // console.log('Received gift:', data);
+      if (data.giftType === 1 && !data.repeatEnd) return;
 
       const giftData = {
-        username: data.user.nickname || data.user.userId,
-        avatar: data.user.profilePicture.urls[0],
-        name: data.giftDetails.giftName,
-        count: `${data.repeatCount}`
+        username: data.nickname || data.uniqueId,
+        avatar: data.profilePictureUrl,
+        name: data.giftName,
+        count: data.diamondCount
       };
 
       mainWindow.webContents.send('gift', giftData);
