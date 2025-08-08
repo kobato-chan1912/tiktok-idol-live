@@ -58,6 +58,24 @@
   </style>
 </head>
 
+
+<div class="modal fade" id="effectModal" tabindex="-1" aria-labelledby="effectModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="effectModalLabel">Danh sách hiệu ứng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body" id="effectListContainer">
+        <!-- Các nút hiệu ứng sẽ được thêm bằng JS -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <body class="p-4">
   <div id="overlay" class="overlay">
     <div class="overlay__inner">
@@ -107,14 +125,25 @@
 
         <hr class="my-4" />
 
+
+        <div class="d-flex align-items-center mb-3">
+          <div>Số quà hiện hiệu ứng video</div>
+          <input type="number" id="special_show" class="form-control ms-2" min="1" style="width: 100px;" />
+        </div>
+
         <label for="effects-container " class="form-label mb-2">Hiệu ứng hiển thị</label>
 
         <div id="effects-list"></div>
 
+
+
+
         <button id="add-effect" class="btn btn-primary mt-3">+ Thêm hiệu ứng</button>
         <button onclick="saveEffectMap()" class="btn btn-primary mt-3">Lưu hiệu ứng</button>
         <button onclick="loadEffectMapFromFile()" class="btn btn-primary mt-3">Load hiệu ứng</button>
-
+        <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#effectModal">
+          Hiển thị danh sách hiệu ứng
+        </button>
         <template id="effect-template">
           <div class="row mb-2 align-items-center effect-item">
             <div class="col-md-5">

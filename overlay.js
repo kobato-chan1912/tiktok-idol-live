@@ -147,6 +147,40 @@ function showEffect(effectId, username, avatarBaseUrl) {
 
 }
 
+function showVideoEffect(effectId, username, avatarBaseUrl) {
+
+
+  const effectElement = document.getElementById(effectId);
+  if (!effectElement) {
+    console.error("Effect element not found:", effectId);
+    return;
+  }
+
+  // Update avatar
+  const avatarImg = effectElement.querySelector('.avatar');
+  if (avatarImg) {
+    avatarImg.src = avatarBaseUrl + encodeURIComponent(username);
+  }
+
+  // Update username and message
+  const usernameSpan = effectElement.querySelector('.username');
+  if (usernameSpan) {
+    usernameSpan.textContent = username;
+  }
+
+  effectElement.classList.add('active');
+
+  // đóng hiệu ứng sau 5s có fadeout
+  setTimeout(() => {
+    effectElement.style.animation = 'fadeout 1s forwards';
+    setTimeout(() => {
+      effectElement.classList.remove('active');
+      effectElement.style.animation = ''; // Reset animation
+    }, 1000);
+  }, 5000);
+
+}
+
 
 socket.on('show-gift', gift => {
 
@@ -174,34 +208,78 @@ socket.on('show-gift', gift => {
 
 
   if (gift.main_effect && type == 2) {
+    let maxDuration = 0;
+
     for (let i = 0; i < amount; i++) {
+      let duration = 5000;
+      if (gift.gif.includes('special')) duration = 10000;
 
-
-      const effect = {
-        gif: gift.gif,
-        sound: gift.sound,
+      const delay = i * duration;
+      if (delay + duration > maxDuration) {
+        maxDuration = delay + duration;
       }
-      const effectBox = document.createElement('div');
-      effectBox.className = 'effect-box';
-
-      const gif = document.createElement('img');
-      gif.className = 'effect-gif';
-      gif.src = effect.gif;
-      console.log('effect.gif', effect.gif);
-      effectBox.appendChild(gif);
-      frame.appendChild(effectBox);
-
-      const audio = new Audio(effect.sound);
-      audio.play();
 
       setTimeout(() => {
-        effectBox.style.animation = 'fadeout 1s forwards';
-        setTimeout(() => effectBox.remove(), 1000);
-      }, 5000);
+        const effectBox = document.createElement('div');
+        effectBox.className = 'effect-box';
 
+        const gif = document.createElement('img');
+        gif.className = gift.gif.includes('nomask') ? 'effect-gif-nomask' : 'effect-gif';
+        gif.src = gift.gif;
+        effectBox.appendChild(gif);
+        frame.appendChild(effectBox);
+
+        const audio = new Audio(gift.sound);
+        audio.play();
+
+        setTimeout(() => {
+          effectBox.style.animation = 'fadeout 1s forwards';
+          setTimeout(() => effectBox.remove(), 1000);
+        }, duration);
+
+      }, delay);
     }
 
+    // Sau khi tất cả effect hiển thị xong, mới phát video
+    if (gift.is_video) {
+      setTimeout(() => {
+        const effectBox = document.createElement('div');
+        effectBox.className = 'effect-box';
+        const videoElement = document.createElement('video');
+        videoElement.className = 'effect-gif-nomask';
+        videoElement.src = gift.video;
+        videoElement.muted = false;
+        effectBox.appendChild(videoElement);
+        frame.appendChild(effectBox);
+        videoElement.play();
+
+        videoElement.addEventListener('loadedmetadata', () => {
+          const videoDuration = videoElement.duration;
+
+          // Đặt timer cảnh báo trước 5s khi video gần hết
+          const warnTime = (videoDuration - 5) * 1000;
+          if (warnTime > 0) {
+            setTimeout(() => {
+            
+              videoElement.style.opacity = '0.5';
+              showVideoEffect("video-effect1", gift.username, gift.avatar);
+            }, warnTime);
+          }
+        });
+
+        // Khi video kết thúc thì fadeout và remove
+        videoElement.addEventListener('ended', () => {
+          effectBox.style.animation = 'fadeout 1s forwards';
+          setTimeout(() => effectBox.remove(), 1000);
+        });
+
+
+
+      }, maxDuration + 3000);
+    }
   }
+
+
 
 
 

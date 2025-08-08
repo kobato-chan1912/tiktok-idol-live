@@ -49,6 +49,12 @@ document.getElementById('toggleLive').addEventListener('click', async () => {
 
 ipcRenderer.on('gift', (event, gift) => {
   console.log('Gift:', gift);
+  let showVideoAmount = parseInt(document.getElementById('special_show').value.trim());
+  let giftCount = parseInt(gift.count);
+  gift.is_video = false;
+  if (giftCount >= showVideoAmount) {
+    gift.is_video = true;
+  }
   overlayServer?.sendGift(gift); // nếu bạn có overlayServer
 });
 
@@ -101,7 +107,7 @@ ipcRenderer.invoke('get-user-data-path').then(p => {
     try {
       effectsData = JSON.parse(fs.readFileSync(dataPath));
       populateEffectSelects();
-      // loadEffectMap();
+      loadEffectMap();
 
     } catch (e) {
       console.log('Cannot load effects data:', e);
@@ -117,17 +123,19 @@ function showEffectByClicking(row) {
   const giftName = row.querySelector('.gift-name').value.trim().toLowerCase();
   const giftData = {
     username: null,
-    avatar: null, 
+    avatar: null,
     name: giftName,
     count: 1,
-    selfClick: true 
+    selfClick: true,
+    is_video: true,
+
   };
   overlayServer.sendGift(giftData);
-  showEffect(effect, giftName);
+  // showEffect(effect, giftName);
 }
 
 
-function createEffectRow(giftName = '', selectedEffect = '') {
+function createEffectRow(giftName = '', selectedEffect = '', shortcut = '') {
   const row = document.createElement('div');
   row.className = 'effect-row';
   row.style.display = 'flex';
@@ -138,6 +146,31 @@ function createEffectRow(giftName = '', selectedEffect = '') {
   input.placeholder = 'Tên loại quà';
   input.className = 'gift-name form-control';
   input.value = giftName;
+
+  const shortcutInput = document.createElement('input');
+  shortcutInput.placeholder = 'Phím tắt (nếu có)';
+  shortcutInput.className = 'shortcut form-control';
+  shortcutInput.value = shortcut;
+
+
+  shortcutInput.addEventListener('keydown', (e) => {
+    e.preventDefault();
+
+    let keys = [];
+
+    if (e.ctrlKey) keys.push('Ctrl');
+    if (e.altKey) keys.push('Alt');
+    if (e.shiftKey) keys.push('Shift');
+    if (e.metaKey) keys.push('Meta'); // cho Mac
+
+    if (!['Control', 'Alt', 'Shift', 'Meta'].includes(e.key)) {
+      keys.push(e.key.length === 1 ? e.key.toUpperCase() : e.key);
+    }
+
+    shortcutInput.value = keys.join('+');
+  });
+
+
 
   const select = document.createElement('select');
   select.className = 'effect-select form-select';
@@ -166,6 +199,7 @@ function createEffectRow(giftName = '', selectedEffect = '') {
 
   row.appendChild(input);
   row.appendChild(select);
+  row.appendChild(shortcutInput);
   row.appendChild(delBtn);
   row.appendChild(effectBtn);
   return row;
@@ -197,12 +231,31 @@ window.getEffectMap = () => {
   rows.forEach(row => {
     const gift = row.querySelector('.gift-name').value.trim().toLowerCase();
     const effect = row.querySelector('.effect-select').value;
+    const shortcut = row.querySelector('.shortcut').value;
     if (gift && effect && effect !== 'none') {
-      map[gift] = effectsData.find(e => e.name === effect);
+      const effectObj = effectsData.find(e => e.name === effect);
+      if (effectObj) {
+        map[gift] = {
+          ...effectObj,
+          shortcut: shortcut
+        };
+      }
     }
+
   });
+  // get videos 
+  const videos = [];
+  const videoPaths = path.join(userDataPath, 'main-assets', 'videos');
+  if (fs.existsSync(videoPaths)) {
+    const videoFiles = fs.readdirSync(videoPaths).filter(f => f.toLowerCase().endsWith('.mp4'));
+    videoFiles.forEach(file => {
+      videos.push(file);
+    });
+  }
+  map['videos'] = videos;
   return map;
 };
+
 
 function loadEffectMap() {
   if (!fs.existsSync(effectMapPath)) {
@@ -215,13 +268,18 @@ function loadEffectMap() {
     const savedMap = JSON.parse(raw);
 
     Object.entries(savedMap).forEach(([gift, effectObj]) => {
-      let row = createEffectRow(gift, effectObj.name);
-      const effectsList = document.getElementById('effects-list');
-      effectsList.appendChild(row);
+      if (gift !== 'open-video') {
+        let row = createEffectRow(gift, effectObj.name, effectObj.shortcut || '');
+        const effectsList = document.getElementById('effects-list');
+        effectsList.appendChild(row);
+      }
+
     });
 
 
     console.log('Effect map loaded from:', effectMapPath);
+    let openVideoValue = savedMap["open-video"] || '10';
+    document.getElementById('special_show').value = openVideoValue;
   } catch (err) {
     console.error('Failed to load effect map:', err);
   }
@@ -229,12 +287,11 @@ function loadEffectMap() {
 
 async function saveEffectMap() {
   const effectMap = window.getEffectMap();
-  const filePath = await ipcRenderer.invoke('dialog:saveFile', 'my-username.json');
-  try {
-    fs.writeFileSync(filePath, JSON.stringify(effectMap, null, 2), 'utf-8');
-  } catch (err) {
-    console.error('Failed to save effect map:', err);
-  }
+  effectMap["open-video"] = document.getElementById('special_show').value.trim();
+  // loại trừ effectMap["videos"] khỏi việc lưu
+  delete effectMap["videos"];
+  fs.writeFileSync(effectMapPath, JSON.stringify(effectMap, null, 2), 'utf-8');
+  alert("Đã lưu hiệu ứng vào " + effectMapPath + "!");
 };
 
 async function loadEffectMapFromFile() {
@@ -249,11 +306,16 @@ async function loadEffectMapFromFile() {
     effectsList.innerHTML = ''; // Clear existing rows
 
     Object.entries(loadedMap).forEach(([gift, effectObj]) => {
-      let row = createEffectRow(gift, effectObj.name);
-      effectsList.appendChild(row);
+      if (gift !== 'open-video') {
+        let row = createEffectRow(gift, effectObj.name, effectObj.shortcut || '');
+        effectsList.appendChild(row);
+      }
+
     });
 
     console.log('Effect map loaded from:', filePath);
+    let openVideoValue = loadedMap["open-video"] || '10';
+    document.getElementById('special_show').value = openVideoValue;
   } catch (err) {
     console.error('Failed to load effect map from file:', err);
   }
@@ -344,6 +406,71 @@ async function checkEnterLicense(license) {
     return { valid: false, license_type: 'free' };
   }
 }
+
+// show hiệu ứng từng phím tắt
+document.addEventListener('keydown', (e) => {
+
+  const key = e.key.length === 1 ? e.key.toUpperCase() : e.key;
+  const ctrl = e.ctrlKey ? 'Ctrl' : '';
+  const alt = e.altKey ? 'Alt' : '';
+  const shift = e.shiftKey ? 'Shift' : '';
+  const meta = e.metaKey ? 'Meta' : '';
+
+  const parts = [ctrl, alt, shift, meta].filter(Boolean);
+  if (!['Control', 'Shift', 'Alt', 'Meta'].includes(key)) {
+    parts.push(key);
+  }
+
+  const shortcut = parts.join('+');
+  console.log('Key pressed:', shortcut);
+
+
+  const rows = document.querySelectorAll('.effect-row');
+  rows.forEach(row => {
+    const rowShortcut = row.querySelector('.shortcut').value.trim();
+    const effectName = row.querySelector('.effect-select').value;
+
+    if (effectName !== 'none' && rowShortcut === shortcut) {
+      showEffectByClicking(row);
+    }
+  });
+
+});
+
+
+const effectModal = document.getElementById('effectModal');
+
+effectModal.addEventListener('show.bs.modal', () => {
+  const container = document.getElementById('effectListContainer');
+  container.innerHTML = ''; // clear trước khi render lại
+
+  const rows = document.querySelectorAll('.effect-row');
+
+  rows.forEach(row => {
+    const giftName = row.querySelector('.gift-name')?.value.trim();
+    const effectName = row.querySelector('.effect-select')?.value;
+    const shortcut = row.querySelector('.shortcut')?.value.trim();
+
+    if (effectName && effectName !== 'none') {
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-outline-dark m-1';
+      btn.textContent = `${effectName}${shortcut ? ' (' + shortcut + ')' : ''}`;
+
+      btn.onclick = () => {
+        showEffectByClicking(row);
+        const modal = bootstrap.Modal.getInstance(effectModal);
+        // modal.hide(); // ẩn modal sau khi chọn hiệu ứng (tùy bạn)
+      };
+
+      container.appendChild(btn);
+    }
+  });
+
+  if (container.innerHTML === '') {
+    container.innerHTML = '<p class="text-muted">Không có hiệu ứng nào.</p>';
+  }
+});
+
 
 
 document.getElementById('submit-license').addEventListener('click', async () => {

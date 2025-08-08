@@ -38,9 +38,19 @@ server.listen(4000, async () => {
 
 module.exports = {
   sendGift: (gift) => {
+    
     const effectMap = window.getEffectMap();
     const giftName = gift.name.toLowerCase();
     const effectSetting = effectMap[giftName];
+    // lấy video ngẫu nhiên từ effectSetting["videos"]
+    if (effectMap["videos"] && gift.is_video) {
+      const videos = effectMap["videos"];
+      const videoFile = videos[Math.floor(Math.random() * videos.length)];
+      gift.video = "http://localhost:4001/videos/" + videoFile;
+    } else {
+      gift.video = null; // Không có video
+    }
+
     const noThanks = window.getNoThankGiftNames();
     let is_thank = true;
     if (noThanks.includes(gift.name) || gift.selfClick) {
@@ -52,7 +62,6 @@ module.exports = {
       const effect = pickRandomFromEffect(effectSetting);
       gift.gif = "http://localhost:4001" + effect.gif;
       gift.sound = "http://localhost:4001" + effect.sound;
-
     }
     gift.is_thank = is_thank;
     gift.main_effect = effectSetting ? true : false;
