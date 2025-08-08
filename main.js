@@ -21,7 +21,7 @@ let tiktokLive = null;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 600,
+    width: 1000,
     height: 1000,
     webPreferences: {
       nodeIntegration: true, // Cho phép sử dụng require trong renderer process
