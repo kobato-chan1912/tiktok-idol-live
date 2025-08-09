@@ -303,21 +303,16 @@ socket.on('show-gift', gift => {
       totalDelay += duration;
     }
 
-    // Sau khi TẤT CẢ effect xong, mới phát video
-    if (gift.is_video) {
-      setTimeout(() => {
-        showVideoElement(gift);
-      }, totalDelay + 2000); // 2s đệm sau hiệu ứng cuối
-    }
+
   }
 
 
 
-  if (!gift.main_effect && gift.is_video) {
+  if (gift.is_video) {
 
-     setTimeout(() => {
-        showVideoElement(gift);
-      }, 3000); // 3s đệm sau hiệu ứng cuối
+    setTimeout(() => {
+      showVideoElement(gift);
+    }, 1500); // 1.5s đệm sau hiệu ứng cuối
 
 
   }
