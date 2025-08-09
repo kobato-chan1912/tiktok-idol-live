@@ -122,8 +122,8 @@ ipcRenderer.invoke('get-user-data-path').then(p => {
 function showEffectByClicking(row) {
   const giftName = row.querySelector('.gift-name').value.trim().toLowerCase();
   const giftData = {
-    username: null,
-    avatar: null,
+    // username: 'test_user',
+    // avatar: 'https://jbagy.me/wp-content/uploads/2025/03/Hinh-anh-avatar-anime-nu-cute-2.jpg',
     name: giftName,
     count: 1,
     selfClick: true,

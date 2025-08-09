@@ -162,7 +162,13 @@ function startStaticServerIfNeeded() {
   const assetPath = path.join(app.getPath('userData'), 'main-assets');
 
   if (fs.existsSync(assetPath)) {
-    expressApp.use(express.static(assetPath));
+    expressApp.use(express.static(assetPath, {
+      setHeaders: (res, filePath) => {
+        // Một số trình duyệt cần header này để cho phép seek
+        res.setHeader('Accept-Ranges', 'bytes');
+      }
+    }));
+
 
     expressApp.listen(4001, () => {
       console.log(`Localhost static server started at http://localhost:4001/`);

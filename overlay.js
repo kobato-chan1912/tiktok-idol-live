@@ -159,7 +159,7 @@ function showVideoEffect(effectId, username, avatarBaseUrl) {
   // Update avatar
   const avatarImg = effectElement.querySelector('.avatar');
   if (avatarImg) {
-    avatarImg.src = avatarBaseUrl + encodeURIComponent(username);
+    avatarImg.src = avatarBaseUrl;
   }
 
   // Update username and message
@@ -219,7 +219,24 @@ function showVideoElement(gift) {
     if (warnTime > 0) {
       setTimeout(() => {
 
-        videoElement.style.opacity = '0.5';
+        // videoElement.style.opacity = '0.4';
+        const overlay = document.createElement('div');
+        overlay.style.position = 'absolute';
+        overlay.style.top = 0;
+        overlay.style.left = 0;
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'black';
+        overlay.style.opacity = '0.5'; // Độ đậm của lớp phủ
+        overlay.style.pointerEvents = 'none'; // Không chặn click vào video
+
+        // Đảm bảo effectBox là position: relative
+        effectBox.style.position = 'relative';
+
+        // Thêm video trước, rồi thêm overlay
+        effectBox.appendChild(videoElement);
+        effectBox.appendChild(overlay);
+
         showVideoEffect("video-effect1", gift.username, gift.avatar);
       }, warnTime);
     }
