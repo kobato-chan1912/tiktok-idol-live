@@ -127,7 +127,7 @@ function showEffectByClicking(row) {
     name: giftName,
     count: 1,
     selfClick: true,
-    is_video: true,
+    is_video: false,
 
   };
   overlayServer.sendGift(giftData);
@@ -285,13 +285,20 @@ function loadEffectMap() {
   }
 };
 
-async function saveEffectMap() {
+async function saveEffectMap(choseFile = false) {
   const effectMap = window.getEffectMap();
   effectMap["open-video"] = document.getElementById('special_show').value.trim();
   // loại trừ effectMap["videos"] khỏi việc lưu
   delete effectMap["videos"];
+  if (choseFile) {
+    const filePath = await ipcRenderer.invoke('dialog:saveFile', 'username');
+    if (!filePath) return;
+    fs.writeFileSync(filePath, JSON.stringify(effectMap, null, 2), 'utf-8');
+    alert("Đã lưu hiệu ứng!");
+    return;
+  }
   fs.writeFileSync(effectMapPath, JSON.stringify(effectMap, null, 2), 'utf-8');
-  alert("Đã lưu hiệu ứng vào " + effectMapPath + "!");
+  alert("Đã lưu hiệu ứng!");
 };
 
 async function loadEffectMapFromFile() {
@@ -407,8 +414,11 @@ async function checkEnterLicense(license) {
   }
 }
 
-// show hiệu ứng từng phím tắt
 document.addEventListener('keydown', (e) => {
+
+  // Kiểm tra nếu sự kiện diễn ra trong input hoặc textarea
+  const isInputOrTextarea = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
+  if (isInputOrTextarea) return;  // Nếu đang focus vào input/textarea, không xử lý phím tắt
 
   const key = e.key.length === 1 ? e.key.toUpperCase() : e.key;
   const ctrl = e.ctrlKey ? 'Ctrl' : '';
@@ -424,7 +434,6 @@ document.addEventListener('keydown', (e) => {
   const shortcut = parts.join('+');
   console.log('Key pressed:', shortcut);
 
-
   const rows = document.querySelectorAll('.effect-row');
   rows.forEach(row => {
     const rowShortcut = row.querySelector('.shortcut').value.trim();
@@ -436,6 +445,7 @@ document.addEventListener('keydown', (e) => {
   });
 
 });
+
 
 
 const effectModal = document.getElementById('effectModal');
