@@ -39,7 +39,7 @@ server.listen(4000, async () => {
 module.exports = {
   sendGift: (gift) => {
 
-    console.log('Sending gift:', gift);
+    // console.log('Sending gift:', gift);
     
     const effectMap = window.getEffectMap();
     const giftName = gift.name.toLowerCase();

@@ -219,7 +219,7 @@ function showVideoElement(gift) {
     if (warnTime > 0) {
       setTimeout(() => {
 
-        videoElement.style.opacity = '0.2';
+        videoElement.style.opacity = '0.5';
         showVideoEffect("video-effect1", gift.username, gift.avatar);
       }, warnTime);
     }
@@ -238,7 +238,7 @@ socket.on('show-gift', gift => {
   console.log('Received gift:', gift);
 
 
-  const amount = parseInt(gift.count);
+  // const amount = parseInt(gift.count);
 
 
 
@@ -264,7 +264,7 @@ socket.on('show-gift', gift => {
   if (gift.main_effect && type == 2) {
     let totalDelay = 0; // dùng cộng dồn thay vì i * duration
 
-    for (let i = 0; i < amount; i++) {
+    for (let i = 0; i < gift.gif_count; i++) {
       // Chọn effect cho lần render này (KHÔNG ghi đè vào gift gốc)
       let gifUrl = gift.gif;
       let soundUrl = gift.sound;
@@ -315,7 +315,9 @@ socket.on('show-gift', gift => {
 
   if (!gift.main_effect && gift.is_video) {
 
-    showVideoElement(gift);
+     setTimeout(() => {
+        showVideoElement(gift);
+      }, 3000); // 3s đệm sau hiệu ứng cuối
 
 
   }
