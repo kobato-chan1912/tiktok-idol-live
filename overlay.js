@@ -264,7 +264,7 @@ socket.on('show-gift', gift => {
   if (gift.main_effect && type == 2) {
     let totalDelay = 0; // dùng cộng dồn thay vì i * duration
 
-    for (let i = 0; i < gift.gif_count; i++) {
+    for (let i = 0; i < gift.gift_count; i++) {
       // Chọn effect cho lần render này (KHÔNG ghi đè vào gift gốc)
       let gifUrl = gift.gif;
       let soundUrl = gift.sound;

@@ -75,7 +75,7 @@ ipcMain.handle('start-live', async (event, username) => {
         avatar: data.profilePictureUrl,
         name: data.giftName,
         count: data.repeatCount * data.diamondCount,
-        gif_count: data.repeatCount
+        gift_count: data.repeatCount
       };
 
       mainWindow.webContents.send('gift', giftData);
