@@ -181,6 +181,57 @@ function showVideoEffect(effectId, username, avatarBaseUrl) {
 
 }
 
+function randomItem(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function pickRandomFromEffect(effect) {
+  const effectName = effect.name;
+
+  const gifFiles = effect.gifs.split(',').map(s => s.trim());
+  const gifFile = randomItem(gifFiles);
+  const gif = "/assets/" + effectName + "/" + gifFile;
+
+  const soundFiles = effect.sounds.split(',').map(s => s.trim());
+  const soundFile = randomItem(soundFiles);
+  const sound = "/assets/" + effectName + "/" + soundFile;
+
+  return { gif, sound };
+}
+
+
+function showVideoElement(gift) {
+  const effectBox = document.createElement('div');
+  effectBox.className = 'effect-box';
+  const videoElement = document.createElement('video');
+  videoElement.className = 'effect-gif-nomask';
+  videoElement.src = gift.video;
+  videoElement.muted = false;
+  effectBox.appendChild(videoElement);
+  frame.appendChild(effectBox);
+  videoElement.play();
+
+  videoElement.addEventListener('loadedmetadata', () => {
+    const videoDuration = videoElement.duration;
+
+    // Đặt timer cảnh báo trước 5s khi video gần hết
+    const warnTime = (videoDuration - 5) * 1000;
+    if (warnTime > 0) {
+      setTimeout(() => {
+
+        videoElement.style.opacity = '0.2';
+        showVideoEffect("video-effect1", gift.username, gift.avatar);
+      }, warnTime);
+    }
+  });
+
+  // Khi video kết thúc thì fadeout và remove
+  videoElement.addEventListener('ended', () => {
+    effectBox.style.animation = 'fadeout 1s forwards';
+    setTimeout(() => effectBox.remove(), 1000);
+  });
+}
+
 
 socket.on('show-gift', gift => {
 
@@ -195,6 +246,8 @@ socket.on('show-gift', gift => {
   const urlParams = new URLSearchParams(window.location.search);
   const type = urlParams.get('type');
 
+
+
   if (gift.is_thank && type == 1) {
     // random 1 to 20
     setTimeout(() => {
@@ -207,76 +260,64 @@ socket.on('show-gift', gift => {
 
 
 
+
   if (gift.main_effect && type == 2) {
-    let maxDuration = 0;
+    let totalDelay = 0; // dùng cộng dồn thay vì i * duration
 
     for (let i = 0; i < amount; i++) {
-      let duration = 5000;
-      if (gift.gif.includes('special')) duration = 10000;
+      // Chọn effect cho lần render này (KHÔNG ghi đè vào gift gốc)
+      let gifUrl = gift.gif;
+      let soundUrl = gift.sound;
 
-      const delay = i * duration;
-      if (delay + duration > maxDuration) {
-        maxDuration = delay + duration;
+      if (gift.effect_setting) {
+        const effect = pickRandomFromEffect(gift.effect_setting);
+        gifUrl = "http://localhost:4001" + effect.gif;
+        soundUrl = "http://localhost:4001" + effect.sound;
       }
 
+      // Thời lượng riêng cho lần này
+      const duration = gifUrl.includes('special') ? 10000 : 5000;
+
+      // Lên lịch hiển thị theo tổng delay đã cộng dồn
       setTimeout(() => {
         const effectBox = document.createElement('div');
         effectBox.className = 'effect-box';
 
         const gif = document.createElement('img');
-        gif.className = gift.gif.includes('nomask') ? 'effect-gif-nomask' : 'effect-gif';
-        gif.src = gift.gif;
+        gif.className = gifUrl.includes('nomask') ? 'effect-gif-nomask' : 'effect-gif';
+        gif.src = gifUrl;
         effectBox.appendChild(gif);
         frame.appendChild(effectBox);
 
-        const audio = new Audio(gift.sound);
+        const audio = new Audio(soundUrl);
         audio.play();
 
+        // Hết duration thì fadeout & remove
         setTimeout(() => {
           effectBox.style.animation = 'fadeout 1s forwards';
           setTimeout(() => effectBox.remove(), 1000);
         }, duration);
+      }, totalDelay);
 
-      }, delay);
+      // Cộng dồn cho lượt kế tiếp
+      totalDelay += duration;
     }
 
-    // Sau khi tất cả effect hiển thị xong, mới phát video
+    // Sau khi TẤT CẢ effect xong, mới phát video
     if (gift.is_video) {
       setTimeout(() => {
-        const effectBox = document.createElement('div');
-        effectBox.className = 'effect-box';
-        const videoElement = document.createElement('video');
-        videoElement.className = 'effect-gif-nomask';
-        videoElement.src = gift.video;
-        videoElement.muted = false;
-        effectBox.appendChild(videoElement);
-        frame.appendChild(effectBox);
-        videoElement.play();
-
-        videoElement.addEventListener('loadedmetadata', () => {
-          const videoDuration = videoElement.duration;
-
-          // Đặt timer cảnh báo trước 5s khi video gần hết
-          const warnTime = (videoDuration - 5) * 1000;
-          if (warnTime > 0) {
-            setTimeout(() => {
-            
-              videoElement.style.opacity = '0.5';
-              showVideoEffect("video-effect1", gift.username, gift.avatar);
-            }, warnTime);
-          }
-        });
-
-        // Khi video kết thúc thì fadeout và remove
-        videoElement.addEventListener('ended', () => {
-          effectBox.style.animation = 'fadeout 1s forwards';
-          setTimeout(() => effectBox.remove(), 1000);
-        });
-
-
-
-      }, maxDuration + 3000);
+        showVideoElement(gift);
+      }, totalDelay + 2000); // 2s đệm sau hiệu ứng cuối
     }
+  }
+
+
+
+  if (!gift.main_effect && gift.is_video) {
+
+    showVideoElement(gift);
+
+
   }
 
 

@@ -67,14 +67,14 @@ ipcMain.handle('start-live', async (event, username) => {
     await tiktokLive.connect();
 
     tiktokLive.on('gift', data => {
-      console.log('Received gift:', data);
+      // console.log('Received gift:', data);
       if (data.giftType === 1 && !data.repeatEnd) return;
 
       const giftData = {
         username: data.nickname || data.uniqueId,
         avatar: data.profilePictureUrl,
         name: data.giftName,
-        count: data.repeatCount
+        count: data.repeatCount * data.diamondCount
       };
 
       mainWindow.webContents.send('gift', giftData);

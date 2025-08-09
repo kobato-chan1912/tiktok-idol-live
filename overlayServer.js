@@ -38,6 +38,8 @@ server.listen(4000, async () => {
 
 module.exports = {
   sendGift: (gift) => {
+
+    console.log('Sending gift:', gift);
     
     const effectMap = window.getEffectMap();
     const giftName = gift.name.toLowerCase();
@@ -57,12 +59,14 @@ module.exports = {
       is_thank = false;
     }
 
+    gift.effect_setting = effectSetting;
 
-    if (effectSetting) {
-      const effect = pickRandomFromEffect(effectSetting);
-      gift.gif = "http://localhost:4001" + effect.gif;
-      gift.sound = "http://localhost:4001" + effect.sound;
-    }
+    // if (effectSetting) {
+    //   const effect = pickRandomFromEffect(effectSetting);
+    //   gift.gif = "http://localhost:4001" + effect.gif;
+    //   gift.sound = "http://localhost:4001" + effect.sound;
+    // }
+
     gift.is_thank = is_thank;
     gift.main_effect = effectSetting ? true : false;
     for (const client of clients) {
@@ -99,16 +103,3 @@ async function initBasePath() {
 initBasePath();
 
 
-function pickRandomFromEffect(effect) {
-  const effectName = effect.name;
-
-  const gifFiles = effect.gifs.split(',').map(s => s.trim());
-  const gifFile = randomItem(gifFiles);
-  const gif = "/assets/" + effectName + "/" + gifFile;
-
-  const soundFiles = effect.sounds.split(',').map(s => s.trim());
-  const soundFile = randomItem(soundFiles);
-  const sound = "/assets/" + effectName + "/" + soundFile;
-
-  return { gif, sound };
-}
