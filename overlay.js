@@ -168,6 +168,14 @@ function showVideoEffect(effectId, username, avatarBaseUrl) {
     usernameSpan.textContent = username;
   }
 
+  // update khung 
+  const khungImg = effectElement.querySelector('.khung');
+  if (khungImg) {
+    // random 1 ddeens 8 
+    const khungIndex = Math.floor(Math.random() * 8) + 1; // Random from 1 to 8
+    khungImg.src = `khung/${khungIndex}.png`;
+  }
+
   effectElement.classList.add('active');
 
   // đóng hiệu ứng sau 5s có fadeout
@@ -192,10 +200,24 @@ function pickRandomFromEffect(effect) {
   const gifFile = randomItem(gifFiles);
   const gif = "/assets/" + effectName + "/" + gifFile;
 
-  const soundFiles = effect.sounds.split(',').map(s => s.trim());
-  const soundFile = randomItem(soundFiles);
-  const sound = "/assets/" + effectName + "/" + soundFile;
+  let soundFile = null;
+  if (gifFile) {
+    // Lấy thư mục từ gifFile
+    const gifFolder = gifFile.substring(0, gifFile.lastIndexOf('/'));
 
+    const soundFiles = effect.sounds
+      .split(',')
+      .map(s => s.trim())
+      .filter(f => f.substring(0, f.lastIndexOf('/')) === gifFolder);
+
+    if (soundFiles.length > 0) {
+      soundFile = randomItem(soundFiles);
+    }
+  }
+
+
+
+  const sound = "/assets/" + effectName + "/" + soundFile;
   return { gif, sound };
 }
 

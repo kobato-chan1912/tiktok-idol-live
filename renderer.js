@@ -64,6 +64,21 @@ ipcRenderer.on('gift', (event, gift) => {
 let effectsData = [];
 let userDataPath = '';
 
+function readFilesRecursive(dir) {
+  let results = [];
+  for (const dirent of fs.readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = path.join(dir, dirent.name);
+    if (dirent.isDirectory()) {
+      results = results.concat(readFilesRecursive(fullPath));
+    } else {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
+
+
 async function generateEffectsDataJson(userDataPath) {
   const assetsDir = path.join(userDataPath, 'main-assets', 'assets');
 
@@ -81,10 +96,16 @@ async function generateEffectsDataJson(userDataPath) {
   for (const dirent of effectFolders) {
     const effectName = dirent.name;
     const effectPath = path.join(assetsDir, effectName);
-    const files = fs.readdirSync(effectPath);
 
-    const gifs = files.filter(f => f.toLowerCase().endsWith('.gif'));
-    const sounds = files.filter(f => f.toLowerCase().endsWith('.mp3'));
+    const allFiles = readFilesRecursive(effectPath);
+
+    const gifs = allFiles
+      .filter(f => f.toLowerCase().endsWith('.gif'))
+      .map(f => path.relative(effectPath, f)); // 👉 chỉ còn folder1/filename.gif
+
+    const sounds = allFiles
+      .filter(f => f.toLowerCase().endsWith('.mp3'))
+      .map(f => path.relative(effectPath, f)); // 👉 chỉ còn folderX/filename.mp3
 
     effects.push({
       name: effectName,
@@ -92,6 +113,7 @@ async function generateEffectsDataJson(userDataPath) {
       sounds: sounds.join(', ')
     });
   }
+
 
   fs.writeFileSync(dataFile, JSON.stringify(effects, null, 2), 'utf-8');
   console.log(`✅ Đã tạo file data.json tại: ${dataFile}`);
