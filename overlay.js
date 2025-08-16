@@ -172,7 +172,8 @@ function showVideoEffect(effectId, username, avatarBaseUrl) {
   const khungImg = effectElement.querySelector('.khung');
   if (khungImg) {
     // random 1 ddeens 8 
-    const khungIndex = Math.floor(Math.random() * 8) + 1; // Random from 1 to 8
+    // const khungIndex = Math.floor(Math.random() * 8) + 1; // Random from 1 to 8
+    const khungIndex = 1;
     khungImg.src = `khung/${khungIndex}.png`;
   }
 
