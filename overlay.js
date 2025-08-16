@@ -288,7 +288,7 @@ socket.on('show-gift', gift => {
 
 
 
-  if (gift.is_thank && type == 1) {
+  if (gift.is_thank && type == 1 && !gift.is_video) {
     // random 1 to 20
     setTimeout(() => {
       // const effectId = `effect${Math.floor(Math.random() * 20) + 1}`;
