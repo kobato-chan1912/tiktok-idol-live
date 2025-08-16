@@ -291,7 +291,14 @@ socket.on('show-gift', gift => {
   if (gift.is_thank && type == 1) {
     // random 1 to 20
     setTimeout(() => {
-      const effectId = `effect${Math.floor(Math.random() * 20) + 1}`;
+      // const effectId = `effect${Math.floor(Math.random() * 20) + 1}`;
+      // random effectId từ 1 đến 20 nhưng bỏ số 19
+      let effectIndex = Math.floor(Math.random() * 19) + 1;
+      if (effectIndex == 19){
+        effectIndex = 9;
+      }
+      const effectId = `effect${effectIndex}`;
+
       showEffect(effectId, gift.username, gift.avatar);
     }, 3000);
 
