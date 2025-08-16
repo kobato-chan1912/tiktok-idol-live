@@ -355,7 +355,7 @@ socket.on('show-gift', gift => {
 
 
 
-  if (gift.is_video) {
+  if (gift.is_video && type == 2) {
 
     setTimeout(() => {
       showVideoElement(gift);
