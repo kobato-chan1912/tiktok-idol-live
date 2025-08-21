@@ -126,10 +126,20 @@
         <hr class="my-4" />
 
 
-        <div class="d-flex align-items-center mb-3">
-          <div>Số quà hiện hiệu ứng video</div>
-          <input type="number" id="special_show" class="form-control ms-2" min="1" style="width: 100px;" />
+        <div class="d-flex">
+          <div class="d-flex align-items-center mb-3">
+            <div>Số quà hiện hiệu ứng video</div>
+            <input type="number" id="special_show" class="form-control ms-2" min="1" style="width: 100px;" />
+          </div>
+
+
+          <div class="d-flex align-items-center mb-3 ms-5">
+            <div>Số giây hiển thị hiệu ứng</div>
+            <input step="0.5" type="number" id="show_seconds" class="form-control ms-2" value="1.5" style="width: 100px;" />
+          </div>
+
         </div>
+
 
         <label for="effects-container " class="form-label mb-2">Hiệu ứng hiển thị</label>
 
@@ -141,7 +151,7 @@
         <button id="add-effect" class="btn btn-primary mt-3">+ Thêm hiệu ứng</button>
         <button onclick="saveEffectMap()" class="btn btn-primary mt-3">Lưu hiệu ứng</button>
         <button onclick="loadEffectMapFromFile()" class="btn btn-primary mt-3">Load hiệu ứng</button>
-         <button onclick="saveEffectMap(true)" class="btn btn-primary mt-3">Tạo File hiệu ứng</button>
+        <button onclick="saveEffectMap(true)" class="btn btn-primary mt-3">Tạo File hiệu ứng</button>
         <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#effectModal">
           Hiển thị danh sách hiệu ứng
         </button>

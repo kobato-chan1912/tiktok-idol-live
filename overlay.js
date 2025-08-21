@@ -364,7 +364,7 @@ socket.on('show-gift', gift => {
 
     setTimeout(() => {
       showVideoElement(gift);
-    }, 1500); // 1.5s đệm sau hiệu ứng cuối
+    }, gift.show_seconds * 1000); 
 
 
   }

@@ -50,11 +50,14 @@ document.getElementById('toggleLive').addEventListener('click', async () => {
 ipcRenderer.on('gift', (event, gift) => {
   console.log('Gift:', gift);
   let showVideoAmount = parseInt(document.getElementById('special_show').value.trim());
+  let showVideoSeconds = document.getElementById('show_seconds').value.trim();
   let giftCount = parseInt(gift.count);
   gift.is_video = false;
   if (giftCount >= showVideoAmount) {
     gift.is_video = true;
   }
+
+  gift.show_seconds = parseFloat(showVideoSeconds) || 1.5; // mặc định là 1.5 giây
   overlayServer?.sendGift(gift); // nếu bạn có overlayServer
 });
 
