@@ -5,6 +5,9 @@
 <head>
     <meta charset="UTF-8" />
     <title>Overlay</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&amp;family=Orbitron:wght@700&amp;family=UnifrakturMaguntia&amp;family=Righteous&amp;family=Teko:wght@700&amp;family=Rajdhani:wght@700&amp;display=swap"
+        rel="stylesheet">
     <style>
         .active {
             display: block !important;
@@ -109,7 +112,7 @@
             left: 50%;
             transform: translateX(-50%);
             bottom: 30%;
-            display: none;
+            /* w display: none;  */
             z-index: 10;
             zoom: 2;
         }
@@ -1662,6 +1665,101 @@
                 opacity: 0;
             }
         }
+
+
+        .thankyou-eff1 {
+            font-family: "Orbitron", system-ui;
+            background: linear-gradient(90deg, #eaf6ff, #8ad3ff 30%, #3ab0ff 60%, #eaf6ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 6px rgba(122, 222, 255, .8), 0 0 18px rgba(34, 171, 255, .7), 0 0 36px rgba(8, 120, 255, .5);
+            filter: drop-shadow(0 6px 10px rgba(0, 140, 255, .25));
+            animation: lightningPulse 2.2s ease-in-out infinite;
+
+        }
+
+        .thankyou-eff2 {
+            font-family: "Teko", system-ui;
+            letter-spacing: 1px;
+            background: linear-gradient(180deg, #fff1a6, #ffb347 30%, #ff6a00 60%, #8d1b00 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 0 rgba(0, 0, 0, .35), 0 0 8px rgba(255, 120, 0, .6), 0 0 24px rgba(255, 60, 0, .4);
+            animation: heatFlicker 2.6s infinite steps(2);
+        }
+
+        .thankyou-eff3 {
+            font-family: "Cinzel", serif;
+            background: linear-gradient(180deg, #e8fbff, #b9efff 40%, #83d5ff 70%, #e8fbff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(155, 220, 255, .7), 0 0 26px rgba(120, 200, 255, .5);
+            position: relative;
+        }
+
+        .thankyou-eff4 {
+            font-family: "Cinzel", serif;
+            background: linear-gradient(90deg, #fff6cc, #ffe48f 40%, #ffd14a 70%, #fff6cc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 1px 0 rgba(110, 80, 0, .35), 0 0 12px rgba(255, 210, 90, .55), 0 0 30px rgba(255, 240, 150, .45);
+        }
+
+        .thankyou-eff5 {
+            font-family: "Righteous", cursive;
+            background: linear-gradient(180deg, #e5ffe4, #92ff9e 40%, #24d36e 80%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(70, 255, 140, .6), 0 0 22px rgba(50, 180, 120, .45);
+        }
+
+
+        .thankyou-eff6 {
+            font-family: "Rajdhani", sans-serif;
+            letter-spacing: 1.2px;
+            background: linear-gradient(90deg, #d7caff, #8bb3ff 40%, #5c6cff 70%, #d7caff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(150, 180, 255, .6), 0 0 30px rgba(110, 90, 255, .45);
+            position: relative;
+        }
+
+        .thankyou-eff7 {
+            font-family: "Orbitron", system-ui;
+            letter-spacing: 1.6px;
+            background: linear-gradient(90deg, #e5faff, #00f2ff 45%, #ff70f9 80%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(0, 230, 255, .7), 0 0 24px rgba(255, 120, 255, .45);
+        }
+
+        .thankyou-eff8 {
+            font-family: "Cinzel", serif;
+            letter-spacing: .8px;
+            background: linear-gradient(180deg, #fff0cf, #ffd07a 45%, #c99a3f 85%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 1px 0 rgba(60, 40, 0, .35), 0 0 12px rgba(255, 210, 120, .55), 0 0 26px rgba(220, 160, 60, .45);
+
+        }
+
+        .thankyou-eff9 {
+            font-family: "Rajdhani", sans-serif;
+            background: linear-gradient(180deg, #e8ffff, #60e9ff 45%, #0986b7 85%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(60, 210, 255, .7), 0 0 26px rgba(0, 120, 200, .5);
+            animation: wave 4.5s ease-in-out infinite;
+        }
     </style>
 </head>
 
@@ -1784,7 +1882,7 @@
             <img class="khung" src="khung/1.png" alt="khung">
             <img class="avatar" src="https://cellphones.com.vn/sforum/wp-content/uploads/2024/01/avartar-anime-6.jpg"
                 alt="avatar">
-                <h2 class="message">Thank You <span class="username"></span></h2>
+            <h2 class="username-container">Thank You <span class="username"></span></h2>
             <!-- <div class="spark"></div>
             <div class="spark"></div>
             <div class="spark"></div>

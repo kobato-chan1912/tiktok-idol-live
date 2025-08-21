@@ -7,6 +7,7 @@ const LICENSE_FILE = path.join(app.getPath('userData'), 'license.json');
 const dotenv = require('dotenv');
 const express = require('express');
 const { TikTokLiveConnection, WebcastPushConnection } = require('tiktok-live-connector');
+const axios = require("axios")
 
 // __dirname sẽ là đường dẫn tới thư mục trong asar
 const envPath = path.join(__dirname, '.env');
@@ -60,23 +61,43 @@ app.on('activate', function () {
   }
 });
 
+async function getAvatarLarger(username) {
+  const url = `https://www.tiktok.com/@${username}`;
+  const res = await axios.get(url, {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+    }
+  });
+
+  const html = res.data;
+  // Tìm đúng trường avatarLarger
+  const match = html.match(/"avatarLarger":"(https:[^"]+)"/);
+  if (!match) throw new Error("avatarLarger not found");
+  // Decode lại các \u002F thành /
+  const avatarUrl = match[1].replace(/\\u002F/g, "/");
+  return avatarUrl;
+}
 
 ipcMain.handle('start-live', async (event, username) => {
   try {
     tiktokLive = new WebcastPushConnection(username);
     await tiktokLive.connect();
 
-    tiktokLive.on('gift', data => {
+    tiktokLive.on('gift', async (data) => {
+      console.log(data)
       // console.log('Received gift:', data);
       if (data.giftType === 1 && !data.repeatEnd) return;
 
+      let avatarUrl = await getAvatarLarger(data.uniqueId);
       const giftData = {
         username: data.nickname || data.uniqueId,
-        avatar: data.profilePictureUrl,
+        avatar: avatarUrl || data.profilePictureUrl,
         name: data.giftName,
         count: data.repeatCount * data.diamondCount,
         gift_count: data.repeatCount
       };
+
+      console.log('Gift data:', giftData);
 
       mainWindow.webContents.send('gift', giftData);
 
