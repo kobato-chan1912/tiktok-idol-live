@@ -30,7 +30,8 @@ document.getElementById('toggleLive').addEventListener('click', async () => {
       isLive = true;
       btn.innerText = 'Dừng Live';
       btn.className = 'btn btn-danger';
-      alert('Đã kết nối tới live!');
+      localStorage.setItem("username", username);
+      // alert('Đã kết nối tới live!');
     } else {
       alert('Không thể kết nối: ' + res.error);
       btn.innerText = 'Bắt đầu Live';
@@ -150,7 +151,7 @@ function showEffectByClicking(row) {
     // username: 'test_user',
     // avatar: 'https://jbagy.me/wp-content/uploads/2025/03/Hinh-anh-avatar-anime-nu-cute-2.jpg',
     name: giftName,
-    count: 1,
+    gift_count: 1,
     selfClick: true,
     is_video: false,
 
@@ -160,12 +161,20 @@ function showEffectByClicking(row) {
 }
 
 
-function createEffectRow(giftName = '', selectedEffect = '', shortcut = '') {
+function createEffectRow(giftName = '', selectedEffect = '', shortcut = '', isPrimary = false) {
   const row = document.createElement('div');
   row.className = 'effect-row';
   row.style.display = 'flex';
+  row.style.alignItems = 'center';
   row.style.gap = '10px';
   row.style.marginBottom = '6px';
+
+  // chỉ checkbox thôi
+  const primaryCheck = document.createElement('input');
+  primaryCheck.type = 'checkbox';
+  primaryCheck.className = 'primary-flag';
+  primaryCheck.checked = !!isPrimary;
+  primaryCheck.title = 'Đánh dấu là hiệu ứng chính';
 
   const input = document.createElement('input');
   input.placeholder = 'Tên loại quà';
@@ -177,32 +186,23 @@ function createEffectRow(giftName = '', selectedEffect = '', shortcut = '') {
   shortcutInput.className = 'shortcut form-control';
   shortcutInput.value = shortcut;
 
-
   shortcutInput.addEventListener('keydown', (e) => {
     e.preventDefault();
-
     let keys = [];
-
     if (e.ctrlKey) keys.push('Ctrl');
     if (e.altKey) keys.push('Alt');
     if (e.shiftKey) keys.push('Shift');
-    if (e.metaKey) keys.push('Meta'); // cho Mac
-
+    if (e.metaKey) keys.push('Meta');
     if (!['Control', 'Alt', 'Shift', 'Meta'].includes(e.key)) {
       keys.push(e.key.length === 1 ? e.key.toUpperCase() : e.key);
     }
-
     shortcutInput.value = keys.join('+');
   });
 
-
-
   const select = document.createElement('select');
   select.className = 'effect-select form-select';
-
   effectsData.forEach(eff => {
     const opt = document.createElement('option');
-
     opt.value = eff.name;
     opt.textContent = eff.name;
     if (eff.name === selectedEffect) opt.selected = true;
@@ -214,21 +214,22 @@ function createEffectRow(giftName = '', selectedEffect = '', shortcut = '') {
   delBtn.textContent = 'Xóa';
   delBtn.onclick = () => row.remove();
 
-
-  // Tạo nút hiệu ứng
   const effectBtn = document.createElement('button');
   effectBtn.className = 'btn btn-primary';
   effectBtn.textContent = 'Show';
   effectBtn.onclick = () => showEffectByClicking(row);
 
-
+  // thứ tự: tick -> gift -> select -> shortcut -> del -> show
+  row.appendChild(primaryCheck);
   row.appendChild(input);
   row.appendChild(select);
   row.appendChild(shortcutInput);
   row.appendChild(delBtn);
   row.appendChild(effectBtn);
+
   return row;
 }
+
 
 function populateEffectSelects() {
   const effectsList = document.getElementById('effects-list');
@@ -278,6 +279,20 @@ window.getEffectMap = () => {
     });
   }
   map['videos'] = videos;
+
+  // custom video 
+  const customVideos = [];
+  let username = document.getElementById('username').value.trim();
+  // find videos in userDataPath,  username
+  const userVideoPath = path.join(userDataPath, 'main-assets', username);
+  if (fs.existsSync(userVideoPath)) {
+    const userVideoFiles = fs.readdirSync(userVideoPath).filter(f => f.toLowerCase().endsWith('.mp4'));
+    userVideoFiles.forEach(file => {
+      customVideos.push( username + "/" + file);
+    });
+  }
+  map['customVideos'] = customVideos;
+
   return map;
 };
 
@@ -313,6 +328,12 @@ function loadEffectMap() {
 async function saveEffectMap(choseFile = false) {
   const effectMap = window.getEffectMap();
   effectMap["open-video"] = document.getElementById('special_show').value.trim();
+
+
+  // update
+  let showVideoSeconds = document.getElementById('show_seconds').value.trim();
+  // save to locastorage
+  localStorage.setItem("showVideoSeconds", showVideoSeconds);
   // loại trừ effectMap["videos"] khỏi việc lưu
   delete effectMap["videos"];
   if (choseFile) {
@@ -323,6 +344,10 @@ async function saveEffectMap(choseFile = false) {
     return;
   }
   fs.writeFileSync(effectMapPath, JSON.stringify(effectMap, null, 2), 'utf-8');
+
+  // customers to local storage
+  const vipCustomers = document.getElementById('vip-customers').value.trim();
+  localStorage.setItem("vipCustomers", vipCustomers);
   alert("Đã lưu hiệu ứng!");
 };
 
@@ -482,6 +507,9 @@ effectModal.addEventListener('show.bs.modal', () => {
   const rows = document.querySelectorAll('.effect-row');
 
   rows.forEach(row => {
+    const isPrimary = !!row.querySelector('.primary-flag')?.checked;
+    if (!isPrimary) return; // chỉ hiện hiệu ứng chính
+
     const giftName = row.querySelector('.gift-name')?.value.trim();
     const effectName = row.querySelector('.effect-select')?.value;
     const shortcut = row.querySelector('.shortcut')?.value.trim();
@@ -548,4 +576,18 @@ async function getLicenseInfoFromMain() {
 
 }
 
+
+window.getVipCustomers = () => {
+  return vipCustomers;
+};
+
 getLicenseInfoFromMain()
+let username = localStorage.getItem("username")
+let showVideoSeconds = localStorage.getItem("showVideoSeconds")
+let vipCustomers = localStorage.getItem("vipCustomers")
+
+document.getElementById('username').value = username || '';
+document.getElementById('show_seconds').value = showVideoSeconds || 1.5;
+document.getElementById('vip-customers').value = vipCustomers || '';
+
+

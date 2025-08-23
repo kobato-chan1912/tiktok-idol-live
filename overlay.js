@@ -244,7 +244,7 @@ function showVideoElement(gift) {
 
     // Đặt timer cảnh báo trước 5s khi video gần hết
     const warnTime = (videoDuration - 5) * 1000;
-    if (warnTime > 0) {
+    if (warnTime > 0 && !gift.is_vip) {
       setTimeout(() => {
 
         // videoElement.style.opacity = '0.4';
@@ -323,6 +323,7 @@ socket.on('show-gift', gift => {
 
       if (gift.effect_setting) {
         const effect = pickRandomFromEffect(gift.effect_setting);
+      
         gifUrl = "http://localhost:4001" + effect.gif;
         soundUrl = "http://localhost:4001" + effect.sound;
       }

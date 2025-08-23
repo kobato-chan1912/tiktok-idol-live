@@ -40,15 +40,28 @@ module.exports = {
   sendGift: (gift) => {
 
     // console.log('Sending gift:', gift);
-    
+
     const effectMap = window.getEffectMap();
+    const vipCustomers = window.getVipCustomers();
+    // tên username = gift.username, kiểm tra xem có phải khách vip
+    let is_vip = vipCustomers.includes(gift.username);
+    gift.is_vip = is_vip;
+
     const giftName = gift.name.toLowerCase();
     const effectSetting = effectMap[giftName];
     // lấy video ngẫu nhiên từ effectSetting["videos"]
     if (effectMap["videos"] && gift.is_video) {
-      const videos = effectMap["videos"];
-      const videoFile = videos[Math.floor(Math.random() * videos.length)];
-      gift.video = "http://localhost:4001/videos/" + videoFile;
+      if (!is_vip) {
+        const videos = effectMap["videos"];
+        const videoFile = videos[Math.floor(Math.random() * videos.length)];
+        gift.video = "http://localhost:4001/videos/" + videoFile;
+      } else {
+        const customVideos = effectMap["customVideos"];
+        const customVideoFile = customVideos[Math.floor(Math.random() * customVideos.length)];
+        gift.video = "http://localhost:4001/" + customVideoFile;
+      }
+
+
     } else {
       gift.video = null; // Không có video
     }
