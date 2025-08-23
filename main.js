@@ -91,6 +91,7 @@ ipcMain.handle('start-live', async (event, username) => {
       let avatarUrl = await getAvatarLarger(data.uniqueId);
       const giftData = {
         username: data.nickname || data.uniqueId,
+        uniqueId: data.uniqueId,
         avatar: avatarUrl || data.profilePictureUrl,
         name: data.giftName,
         count: data.repeatCount * data.diamondCount,

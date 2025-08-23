@@ -163,11 +163,13 @@ function showVideoEffect(effectId, username, avatarBaseUrl) {
   }
 
   // Update username and message
-  const usernameContainer = effectElement.querySelector('.username-container');
+  const usernameContainer = effectElement.querySelectorAll('.thank-title');
   // random 1 to 9
   const usernameEffect = Math.floor(Math.random() * 9) + 1;
   // add class thankyou-eff{eff} 
-  usernameContainer.classList.add(`thankyou-eff${usernameEffect}`);
+  usernameContainer.forEach(container => {
+    container.classList.add(`thankyou-eff${usernameEffect}`);
+  });
   const usernameSpan = effectElement.querySelector('.username');
   if (usernameSpan) {
     usernameSpan.textContent = username;

@@ -258,12 +258,14 @@ window.getEffectMap = () => {
     const gift = row.querySelector('.gift-name').value.trim().toLowerCase();
     const effect = row.querySelector('.effect-select').value;
     const shortcut = row.querySelector('.shortcut').value;
+    const isPrimary = row.querySelector('.primary-flag')?.checked || false;
     if (gift && effect && effect !== 'none') {
       const effectObj = effectsData.find(e => e.name === effect);
       if (effectObj) {
         map[gift] = {
           ...effectObj,
-          shortcut: shortcut
+          shortcut: shortcut,
+          isPrimary: isPrimary
         };
       }
     }
@@ -308,8 +310,8 @@ function loadEffectMap() {
     const savedMap = JSON.parse(raw);
 
     Object.entries(savedMap).forEach(([gift, effectObj]) => {
-      if (gift !== 'open-video') {
-        let row = createEffectRow(gift, effectObj.name, effectObj.shortcut || '');
+      if (gift !== 'open-video' && gift !== 'videos' && gift !== 'customVideos') {
+        let row = createEffectRow(gift, effectObj.name, effectObj.shortcut || '', effectObj.isPrimary || false);
         const effectsList = document.getElementById('effects-list');
         effectsList.appendChild(row);
       }
@@ -363,8 +365,8 @@ async function loadEffectMapFromFile() {
     effectsList.innerHTML = ''; // Clear existing rows
 
     Object.entries(loadedMap).forEach(([gift, effectObj]) => {
-      if (gift !== 'open-video') {
-        let row = createEffectRow(gift, effectObj.name, effectObj.shortcut || '');
+      if (gift !== 'open-video' && gift !== 'videos' && gift !== 'customVideos') {
+        let row = createEffectRow(gift, effectObj.name, effectObj.shortcut || '', effectObj.isPrimary || false);
         effectsList.appendChild(row);
       }
 
@@ -578,7 +580,7 @@ async function getLicenseInfoFromMain() {
 
 
 window.getVipCustomers = () => {
-  return vipCustomers;
+  return document.getElementById('vip-customers').value;
 };
 
 getLicenseInfoFromMain()

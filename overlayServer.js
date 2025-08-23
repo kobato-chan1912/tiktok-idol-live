@@ -43,8 +43,9 @@ module.exports = {
 
     const effectMap = window.getEffectMap();
     const vipCustomers = window.getVipCustomers();
+    // console.log('VIP Customers:', vipCustomers);
     // tên username = gift.username, kiểm tra xem có phải khách vip
-    let is_vip = vipCustomers.includes(gift.username);
+    let is_vip = vipCustomers.includes(gift.uniqueId);
     gift.is_vip = is_vip;
 
     const giftName = gift.name.toLowerCase();
@@ -57,6 +58,7 @@ module.exports = {
         gift.video = "http://localhost:4001/videos/" + videoFile;
       } else {
         const customVideos = effectMap["customVideos"];
+        // console.log('Custom Videos:', customVideos);
         const customVideoFile = customVideos[Math.floor(Math.random() * customVideos.length)];
         gift.video = "http://localhost:4001/" + customVideoFile;
       }
