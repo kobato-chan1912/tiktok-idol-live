@@ -51,14 +51,23 @@ module.exports = {
     const giftName = gift.name.toLowerCase();
     const effectSetting = effectMap[giftName];
     // lấy video ngẫu nhiên từ effectSetting["videos"]
+    const userDataPath = gift.userDataPath || '';
     if (effectMap["videos"] && gift.is_video) {
       if (!is_vip) {
         const videos = effectMap["videos"];
         const videoFile = videos[Math.floor(Math.random() * videos.length)];
         gift.video = "http://localhost:4001/videos/" + videoFile;
       } else {
-        const customVideos = effectMap["customVideos"];
+
         // console.log('Custom Videos:', customVideos);
+        const customVideos = [];
+        const userVideoPath = path.join(userDataPath, 'main-assets', gift.uniqueId);
+        if (fs.existsSync(userVideoPath)) {
+          const userVideoFiles = fs.readdirSync(userVideoPath).filter(f => f.toLowerCase().endsWith('.mp4'));
+          userVideoFiles.forEach(file => {
+            customVideos.push(gift.uniqueId + "/" + file);
+          });
+        }
         const customVideoFile = customVideos[Math.floor(Math.random() * customVideos.length)];
         gift.video = "http://localhost:4001/" + customVideoFile;
       }

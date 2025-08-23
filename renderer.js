@@ -58,6 +58,8 @@ ipcRenderer.on('gift', (event, gift) => {
     gift.is_video = true;
   }
 
+  gift.userDataPath = userDataPath;
+
   gift.show_seconds = parseFloat(showVideoSeconds) || 1.5; // mặc định là 1.5 giây
   overlayServer?.sendGift(gift); // nếu bạn có overlayServer
 });
