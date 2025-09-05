@@ -72,7 +72,7 @@ async function getAvatarLarger(username) {
   const html = res.data;
   // Tìm đúng trường avatarLarger
   const match = html.match(/"avatarLarger":"(https:[^"]+)"/);
-  if (!match) throw new Error("avatarLarger not found");
+  if (!match) return null;
   // Decode lại các \u002F thành /
   const avatarUrl = match[1].replace(/\\u002F/g, "/");
   return avatarUrl;
@@ -85,7 +85,7 @@ ipcMain.handle('start-live', async (event, username) => {
 
     tiktokLive.on('gift', async (data) => {
       console.log(data)
-      // console.log('Received gift:', data);
+      console.log('Received gift:', data);
       if (data.giftType === 1 && !data.repeatEnd) return;
 
       let avatarUrl = await getAvatarLarger(data.uniqueId);
@@ -95,10 +95,32 @@ ipcMain.handle('start-live', async (event, username) => {
         avatar: avatarUrl || data.profilePictureUrl,
         name: data.giftName,
         count: data.repeatCount * data.diamondCount,
-        gift_count: data.repeatCount
+        gift_count: data.repeatCount,
+        is_member: false,
       };
 
       console.log('Gift data:', giftData);
+
+      mainWindow.webContents.send('gift', giftData);
+
+    });
+
+    tiktokLive.on('member', async (data) => {
+
+
+      let avatarUrl = await getAvatarLarger(data.uniqueId);
+
+      const giftData = {
+        username: data.nickname || data.uniqueId,
+        uniqueId: data.uniqueId,
+        avatar: avatarUrl || data.profilePictureUrl,
+        name: 'none',
+        count: 0,
+        gift_count: 0,
+        is_member: true,
+        
+      };
+
 
       mainWindow.webContents.send('gift', giftData);
 

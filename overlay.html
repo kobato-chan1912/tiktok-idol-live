@@ -6,6 +6,10 @@
     <meta charset="UTF-8" />
     <title>Overlay</title>
     <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@700&display=swap"
+        rel="stylesheet">
+
+    <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&amp;family=Orbitron:wght@700&amp;family=UnifrakturMaguntia&amp;family=Righteous&amp;family=Teko:wght@700&amp;family=Rajdhani:wght@700&amp;display=swap"
         rel="stylesheet">
     <style>
@@ -112,7 +116,7 @@
             left: 50%;
             transform: translateX(-50%);
             bottom: 30%;
-            display: none; 
+            display: none;
             z-index: 10;
             zoom: 2;
         }
@@ -1760,6 +1764,119 @@
             text-shadow: 0 0 10px rgba(60, 210, 255, .7), 0 0 26px rgba(0, 120, 200, .5);
             animation: wave 4.5s ease-in-out infinite;
         }
+
+
+
+
+        #fireworks-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .contentTk {
+            text-align: center;
+            z-index: 1;
+            position: absolute;
+            top: 60px;
+            /* Cách màn trên tầm 20px */
+            left: 50%;
+            transform: translateX(-50%);
+            /* Điều chỉnh kích thước content để nằm trong 1/4 chiều rộng màn hình */
+            max-width: 25vw;
+            /* 25% viewport width */
+            min-width: 200px;
+            /* Đảm bảo không quá nhỏ */
+            /* zoom-in: 1.5; */
+        }
+
+        .avatarTk {
+            /* Kích thước avatar được điều chỉnh */
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #fff;
+            /* Giảm border */
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+            animation: pulse 2s infinite alternate;
+            margin: 15px auto;
+            display: block;
+        }
+
+        h1,
+        p.thank-you-text {
+            /* Áp dụng font Dancing Script và hiệu ứng pháo hoa */
+            font-family: 'Dancing Script', cursive;
+            font-weight: 700;
+            margin: 0;
+            color: transparent;
+            /* Làm màu chữ trong suốt để hiển thị stroke và shadow */
+            -webkit-text-stroke: 1.5px hsla(var(--hue, 0), 100%, 70%, 1);
+            /* Đường viền đổi màu theo pháo hoa */
+            text-stroke: 1.5px hsla(var(--hue, 0), 100%, 70%, 1);
+            text-shadow: 0 0 10px hsla(var(--hue, 0), 100%, 60%, 0.9),
+                0 0 18px hsla(var(--hue, 0), 100%, 50%, 0.7),
+                0 0 25px hsla(var(--hue, 0), 100%, 40%, 0.5);
+            animation: flicker 1.5s infinite alternate;
+            /* Hiệu ứng nhấp nháy */
+        }
+
+        h1 {
+            /* Kích thước chữ username được điều chỉnh */
+            font-size: 2.2em;
+            letter-spacing: 0;
+            /* Bỏ letter-spacing cũ để đồng bộ với font mới */
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            /* Đảm bảo nó không tràn ra ngoài div cha */
+            padding: 0 5px;
+            /* Giảm padding */
+        }
+
+        p.thank-you-text {
+            /* Kích thước chữ "Cảm ơn" được điều chỉnh */
+            font-size: 2em;
+            margin-bottom: 8px;
+            letter-spacing: 0;
+            /* Bỏ letter-spacing cũ */
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+                box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+            }
+
+            to {
+                transform: scale(1.05);
+                /* slightly more pronounced pulse */
+                box-shadow: 0 0 25px rgba(255, 255, 255, 1);
+            }
+        }
+
+        @keyframes flicker {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.9;
+            }
+
+            /* Nhấp nháy nhẹ */
+        }
+
+        #fireworks-frame {
+            display: none;
+        }
     </style>
 </head>
 
@@ -1884,7 +2001,18 @@
             <img class="avatar" src="https://cellphones.com.vn/sforum/wp-content/uploads/2024/01/avartar-anime-6.jpg"
                 alt="avatar">
             <h2 style="margin-top: 0px;  text-align: center;" class="username thank-title">Test</h2>
-        
+
+        </div>
+    </div>
+
+
+
+    <div id="fireworks-frame">
+        <div id="fireworks-container"></div>
+        <div class="contentTk">
+            <p class="thank-you-text">Cảm ơn</p>
+            <img class="avatarTk" src="avatar.jpg" alt="Avatar"> <!-- Đảm bảo đường dẫn đúng -->
+            <h1 id="usernameDisplay">TÊN_NGƯỜI_DÙNG_RẤT_DÀI_MÀ_BẠN_MUỐN_HIỂN_THỊ_Ở_ĐÂY</h1>
         </div>
     </div>
 
@@ -1893,6 +2021,260 @@
 
 
 
+
+
+
+
+
+    <script>
+        let animationId = null;
+        const fireworksContainer = document.getElementById('fireworks-container');
+        const canvas = document.createElement('canvas');
+        fireworksContainer.appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+        const usernameDisplay = document.getElementById('usernameDisplay');
+        const thankYouText = document.querySelector('.thank-you-text');
+
+        let particles = [];
+        let globalHue = 0;
+        let lastRocketTime = 0;
+        let lastExplosionTime = 0;
+
+        function setCanvasSize() {
+            const wantedDpr = 1; // cố định 1 cho OBS
+            canvas.style.width = window.innerWidth + 'px';
+            canvas.style.height = window.innerHeight + 'px';
+            canvas.width = window.innerWidth * wantedDpr;
+            canvas.height = window.innerHeight * wantedDpr;
+            ctx.setTransform(wantedDpr, 0, 0, wantedDpr, 0, 0);
+        }
+
+        window.addEventListener('resize', setCanvasSize);
+        setCanvasSize();
+
+        function updateTextHue() {
+            document.documentElement.style.setProperty('--hue', globalHue);
+        }
+
+        // Particle cho effect1 (rocket + trail)
+        function ParticleEffect1(x, y, hue, options = {}) {
+            this.x = x;
+            this.y = y;
+            this.hue = hue;
+            this.speed = options.speed || (Math.random() * 5 + 1);
+            this.angle = options.angle || (Math.random() * Math.PI * 2);
+            this.friction = options.friction || 0.95;
+            this.gravity = options.gravity || 0.5;
+            this.alpha = options.alpha || 1;
+            this.decay = options.decay || (Math.random() * 0.02 + 0.01);
+            this.size = options.size || (Math.random() * 3 + 1);
+            this.isRocket = options.isRocket || false;
+            this.trail = [];
+            this.trailLength = options.trailLength || (this.isRocket ? 10 : 3);
+            this.hasExploded = false;
+        }
+        ParticleEffect1.prototype.update = function () {
+            this.trail.unshift({ x: this.x, y: this.y });
+            if (this.trail.length > this.trailLength) this.trail.pop();
+            if (!this.isRocket) {
+                this.alpha = Math.max(0, this.alpha - this.decay);
+            }
+            this.speed *= this.friction;
+            this.x += Math.cos(this.angle) * this.speed;
+            this.y += Math.sin(this.angle) * this.speed + this.gravity;
+        };
+        ParticleEffect1.prototype.draw = function () {
+            if (this.isRocket) {
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                for (let i = 0; i < this.trail.length; i++) {
+                    ctx.lineTo(this.trail[i].x, this.trail[i].y);
+                }
+                ctx.strokeStyle = `hsla(${this.hue}, 100%, 70%, ${this.alpha * 0.8})`;
+                ctx.lineWidth = this.size / 2;
+                ctx.stroke();
+                ctx.closePath();
+            }
+            if (this.alpha > 0) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 100%, 50%, ${this.alpha})`;
+                ctx.fill();
+                ctx.closePath();
+            }
+        };
+
+        function createExplosionEffect1(x, y, hue) {
+            const count = 100;
+            for (let i = 0; i < count; i++) {
+                const options = {
+                    speed: Math.random() * 9 + 5,
+                    gravity: 0.3,
+                    decay: Math.random() * 0.02 + 0.01,
+                    size: Math.random() * 4 + 1,
+                };
+                particles.push(new ParticleEffect1(x, y, hue + (Math.random() * 40 - 20), options));
+            }
+        }
+
+        function createRocket() {
+            const side = Math.random() < 0.5 ? 'left' : 'right';
+            let startX, startY, angle;
+
+            startY = canvas.height - (canvas.height / 3); // Rocket bắt đầu từ 1/3 dưới màn hình
+
+            if (side === 'left') {
+                startX = 0;
+                angle = -Math.PI / 2 + (Math.random() * (Math.PI / 4) - (Math.PI / 8));
+            } else { // right
+                startX = canvas.width;
+                angle = -Math.PI / 2 - (Math.random() * (Math.PI / 4) - (Math.PI / 8));
+            }
+
+            // Tính toán vị trí Y tối đa mà pháo hoa có thể nổ (1/3 màn hình phía trên)
+            const maxExplodeY = canvas.height / 3;
+            // Đảm bảo targetY nằm trong khoảng trên cùng, và không quá gần biên
+            let targetY = Math.random() * (maxExplodeY - 50) + 50;
+
+            const rocketHue = Math.random() * 360; // Màu rocket ngẫu nhiên
+            const rocketSpeed = Math.random() * 10 + 12;
+            const rocket = new ParticleEffect1(startX, startY, rocketHue, {
+                speed: rocketSpeed,
+                angle: angle,
+                gravity: 0.02,
+                friction: 0.98,
+                isRocket: true,
+                decay: 0,
+                size: 2,
+                trailLength: 10
+            });
+
+            rocket.targetY = targetY;
+            particles.push(rocket);
+        }
+
+
+        // Particle cho effect2
+        function ParticleEffect2(x, y, hue) {
+            this.x = x;
+            this.y = y;
+            this.hue = hue;
+            this.speed = Math.random() * 5 + 1;
+            this.angle = Math.random() * Math.PI * 2;
+            this.friction = 0.95;
+            this.gravity = 0.5;
+            this.alpha = 1;
+            this.decay = Math.random() * 0.015 + 0.01;
+            this.size = Math.random() * 3 + 1;
+        }
+        ParticleEffect2.prototype.update = function () {
+            this.alpha = Math.max(0, this.alpha - this.decay);
+            this.speed *= this.friction;
+            this.x += Math.cos(this.angle) * this.speed;
+            this.y += Math.sin(this.angle) * this.speed + this.gravity;
+        };
+        ParticleEffect2.prototype.draw = function () {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${this.hue}, 100%, 50%, ${this.alpha})`;
+            ctx.fill();
+            ctx.closePath();
+        };
+        function createExplosionEffect2(x, y, hue) {
+            for (let i = 0; i < 60; i++) {
+                particles.push(new ParticleEffect2(x, y, hue));
+            }
+        }
+
+        // animate chung
+        function animate(currentTime, effectType = 'effect1') {
+            animationId = requestAnimationFrame(t => animate(t, effectType));
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillStyle = 'rgba(0,0,0,0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.globalCompositeOperation = 'lighter';
+
+            if (effectType === 'effect1') {
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.update();
+                    if (p.alpha > 0) p.draw();
+                    if (p.isRocket && p.y <= p.targetY && !p.hasExploded) {
+                        createExplosionEffect1(p.x, p.y, p.hue);
+                        p.hasExploded = true;
+                        p.alpha = 0;
+                    }
+                    if ((p.alpha <= 0 && !p.isRocket) || (p.isRocket && p.hasExploded && p.trail.length === 0)) {
+                        particles.splice(i, 1);
+                    }
+                }
+                if (currentTime - lastRocketTime > 300 && Math.random() < 0.99) {
+                    createRocket();
+                    lastRocketTime = currentTime;
+                }
+            } else if (effectType === 'effect2') {
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                }
+                particles = particles.filter(p => p.alpha > 0);
+                if (currentTime - lastExplosionTime > 200 && Math.random() < 0.6) {
+                    createExplosionEffect2(
+                        Math.random() * canvas.width,
+                        Math.random() * (canvas.height / 3),
+                        Math.random() * 360
+                    );
+                    lastExplosionTime = currentTime;
+                }
+            }
+
+            globalHue = (globalHue + 1) % 360;
+            updateTextHue();
+        }
+
+        function stopAnimate() {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+        }
+
+        let fireworkTimeoutId = null;
+
+        function startFireworkEffect(effectType, duration = 5000) {
+            const frame = document.getElementById('fireworks-frame');
+
+            // Hủy vòng lặp cũ
+            stopAnimate();
+
+            // Hủy timeout cũ
+            if (fireworkTimeoutId) {
+                clearTimeout(fireworkTimeoutId);
+                fireworkTimeoutId = null;
+            }
+
+            // Reset particles và hiển thị
+            particles = [];
+            frame.style.display = 'block';
+
+            // Chạy hiệu ứng mới
+            animate(0, effectType);
+
+            // Đặt timeout mới
+            fireworkTimeoutId = setTimeout(() => {
+                stopAnimate();
+                frame.style.display = 'none';
+                fireworkTimeoutId = null;
+            }, duration);
+        }
+
+
+
+
+        // ví dụ gọi
+        // animate(0, 'effect1');
+        // animate(0, 'effect2');
+    </script>
 
 
     <script src="/socket.io/socket.io.js"></script>
